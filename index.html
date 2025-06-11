@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> SciVideoBench </title>
+
+  <!-- <link rel="icon" href="./static/images/video-mme.png"> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/leaderboard.css">
+  <link rel="stylesheet" href="./static/css/video-player.css">
+
+  <!-- <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_bulma.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script> -->
+  <script type="text/javascript" src="static/js/sort-table.js" defer></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/explorer-index.js"></script>
+  <script src="./static/js/question_card.js"></script>
+
+  <script src="./static/js/leaderboard_testmini.js"></script>  
+  <script src="./data/results/output_folders.js" defer></script>
+  <script src="./data/results/model_scores.js" defer></script>
+
+  <script src="./visualizer/data/data_public.js" defer></script>
+
+  <style>
+    .no-sort {
+        cursor: default;
+        pointer-events: none;
+        background-image: none !important; /* Remove the sort arrow */
+    }
+  </style>
+
+</head>
+<body>
+
+  
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <p style="font-size:18px; display: inline; margin-right: -2px; margin-top: 12px;">🔥</p>
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models">
+            <b>MME</b> 
+          </a>
+          <a class="navbar-item" href="https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models">
+            <b>Awesome-MLLM</b> 
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</nav> -->
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title is-bold">
+            <!-- <img src="static/images/video-mme.png" style="width:1.6em;vertical-align: middle" alt="Logo"/> -->
+            <span class="video-mme" style="vertical-align: middle">SciVideoBench</span>
+            </h1>
+          <h2 class="subtitle is-3 publication-subtitle", style="margin-bottom: 20px;">
+            Benchmarking Scientific Video Reasoning <br> in Large Multimodal Models
+          </h2>
+          
+          <!-- <div class="is-size-5 publication-authors", style="width: 80%; margin: 20px auto;", >
+            <span class="author-block", style="font-size:24px"><a href="https://github.com/MME-Benchmarks/Video-MME">V</a></span>
+
+        </div> -->
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">1</sup>Andong Deng</span>
+            <span class="author-block">2</sup>Taojiannan Yang,</span>
+            <span class="author-block"><sup style="color:#9400D3">3</sup>Shoubin Yu</span>
+            <span class="author-block"><sup style="color:#ffac33">1</sup>Lincoln Spencer</span><br>
+            <span class="author-block"><sup style="color:#18acfb">3</sup>Mohit Bansal</span>
+            <span class="author-block"><sup style="color:#33ffd6">1</sup>Chen Chen</span> 
+            <span class="author-block"><sup style="color:#33ffd6">4</sup>Serena Yeung-Levy</span>
+            <span class="author-block"><sup style="color:#33ffd6">4</sup>Xiaohan Wang</span><br>
+          </div>
+
+          <br>
+
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">UCF<sup style="color:#6fbf73;">1</sup></span>
+            <span class="author-block">Amazon<sup style="color:#ed4b82">2</sup></span>
+            <span class="author-block">UNC Chapel Hill<sup style="color:#9400D3">3</sup></span>
+            <span class="author-block">Stanford<sup style="color:#ffac33">1</sup></span><br>
+          </div>
+
+
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2405.21075"
+                   class="external-link button is-normal is-rounded is-dark">
+                <!-- <a href="https://lupantech.github.io/papers/arxiv23_mathvista.pdf"
+                   class="external-link button is-normal is-rounded is-dark"> -->
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/MME-Benchmarks/Video-MME"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>GitHub</span>
+                  </a>
+              </span>
+              <!-- Leaderboard Link. -->
+              <span class="link-block">
+                <a href="#leaderboard"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <p style="font-size:18px">🏆</p>
+                  </span>
+                  <span>Leaderboard</span>
+                </a>
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          Large Multimodal Models (LMMs) have achieved remarkable progress across various capabilities,
+however, video reasoning remains a significant and challenging frontier. Current video benchmarks
+predominantly target general domains with relatively simple reasoning tasks, leading to saturation
+and thus failing to effectively evaluate advanced multimodal cognitive skills. To address this critical
+gap, we introduce SciVideoBench, a rigorous benchmark specifically designed to assess advanced
+video reasoning in scientific contexts. SciVideoBench consists of 965 carefully crafted multiple-choice
+questions derived from cutting-edge experimental videos spanning over 19 specialized academic subjects.
+Each question demands sophisticated domain-specific knowledge, precise spatiotemporal perception,
+and intricate logical reasoning, effectively challenging models' higher-order cognitive abilities. Our
+evaluation highlights significant performance deficits in state-of-the-art proprietary and open-source
+LMMs, including Gemini 2.5 Pro and Qwen2.5-VL, indicating substantial room for advancement in
+video reasoning capabilities. Detailed analyses of critical factors such as reasoning complexity and visual
+grounding provide valuable insights and clear direction for future developments in LMMs, driving the
+evolution of truly capable multimodal AI co-scientists
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</div>
+</section>
+
+
+
+<section class="section">
+  <div class="container" style="margin-bottom: 2vh;">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+
+          Large Multimodal Models (LMMs) have demonstrated rapid advancements
+          across a diverse range of capabilities, including conversational interaction, code genera-
+          tion, mathematical reasoning, and image understanding. Among the various
+          input modalities, video presents a particularly rich and complex form of multimodal data, uniquely
+          integrating temporal dynamics, spatial perception, and high-level semantic reasoning. Consequently,
+          video understanding has emerged as a critical frontier, pivotal for advancing LMMs towards next-
+          generation applications in fields such as robotics, interactive education, and scientific discovery. <br><br>
+
+          To evaluate the performance of LMMs, numerous video benchmarks have been developed. However, the majority of existing benchmarks concentrate on
+          relatively general domains—such as movies, daily activities, and instructional
+          content—and primarily emphasize tasks like temporal grounding, common-sense reasoning, and
+          event understanding. While these benchmarks once posed significant challenges, current state-of-the-
+          art LMMs now exhibit saturated performance, achieving accuracies exceeding 85% on popular
+          datasets like VideoMME. <br> <br>
+
+          More recent initiatives have begun to incorporate scientific and educational videos
+          to assess deeper domain knowledge and reasoning. Nevertheless, most of this content remains at
+          a college level, allowing LMMs to achieve success largely through memorized knowledge with
+          minimal reliance on genuine visual perception. As a result, current benchmarks inadequately evaluate
+          sophisticated cognitive skills that necessitate expert-level knowledge, intricate logical reasoning, and
+          precise visual perception. <br><br>
+
+          To address this critical gap, we introduce SCIVIDEOBENCH, an innovative benchmark specifically
+          designed to rigorously assess advanced video reasoning capabilities. SCIVIDEOBENCH consists of
+          965 meticulously crafted multiple-choice questions derived from research-level experimental videos
+          in physics, chemistry, biology, and medicine. These videos are sourced from 19 distinct academic
+          disciplines, including Fluid Mechanics, Analytical Chemistry, Neuroscience, and Cancer Research.
+          Each question is categorized into one of three types: quantitative calculation, hypothetical reasoning,
+          or conceptual understanding. As illustrated in Fig. 1, SciVideoBench demands that models possess
+          profound domain knowledge, execute sophisticated logical reasoning, and demonstrate accurate
+          spatio-temporal grounding. <br><br>
+
+          We developed SCIVIDEOBENCH using a multi-stage, agent-human collaborative pipeline. This
+process involved mining associated experimental manuscripts, leveraging LMMs for initial ques-
+tion generation, and engaging domain experts to validate the question-answer pairs and filter out
+unanswerable or video-irrelevant questions. <br><br>
+
+
+Our evaluation of both proprietary and open-source LMMs on SCIVIDEOBENCH reveals consistently
+low accuracy, underscoring the significant challenge this new benchmark presents and, consequently,
+the substantial opportunity for advancing video reasoning capabilities. In-depth analysis of the results
+reveals that factors such as model architecture, reasoning capacity, and perceptual grounding play a
+critical role in shaping video reasoning performance. These insights not only offer clear guidance
+for future research efforts aimed at developing more sophisticated LMMs but also emphasize the
+broader potential of SCIVIDEOBENCH. Beyond serving as an essential benchmark for assessing
+current video reasoning abilities, SCIVIDEOBENCH acts as a catalyst, driving focused innovation
+toward the creation of highly capable multimodal AI co-scientists to accelerate the pace of future
+scientific discovery. <br>
+
+
+        
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    updateRowNumbers();
+    document.querySelector("#results").addEventListener("click", updateRowNumbers);
+  });
+
+  function updateRowNumbers() {
+    const rows = document.querySelectorAll("#results tbody tr");
+    rows.forEach((row, index) => {
+      row.querySelector("td").innerText = index + 1;
+    });
+  }
+</script>
+
+<section class="section">
+  <div class="container">
+    
+    <div class="columns is-centered">
+      <div class="column is-full has-text-centered content">
+
+        <h2 class="title is-3" id="leaderboard">Leaderboard</h2>
+        <div class="content">
+          <p class="mt-3">Accuracy scores on SciVideoBench.
+          </p>
+          <!-- <div class="video-duration">
+            <p>
+              <strong>Short Video:</strong> &lt; 2min  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+              <strong>Medium Video:</strong> 4min ~ 15min  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+              <strong>Long Video:</strong> 30min ~ 60min
+            </p>
+            <p>
+              By default, this leaderboard is sorted by results with subtitles. To view other sorted results, please click on the corresponding cell.
+            </p>
+          </div> -->
+
+
+          <table border="1" class="dataframe">
+            <thead>
+            <tr>
+            <th>Models</th><th>LLM</th><th>Size</th><th>Overall</th>
+            <th>Physics</th><th>Chemistry</th><th>Biology</th><th>Medicine</th>
+            <th>Quantitative</th><th>Hypothetical</th><th>Conceptual</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Random Guess</i></td></tr>
+            <tr><td></td><td>-</td><td>-</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td></tr>
+            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Blind Baseline</i></td></tr>
+            <tr><td>Qwen2.5</td><td>-</td><td>3B</td><td>14.64</td><td>15.11</td><td>16.94</td><td>11.47</td><td>12.24</td><td>12.38</td><td>15.52</td><td>15.44</td></tr>
+            <tr><td>Qwen2.5</td><td>-</td><td>7B</td><td>15.61</td><td>17.19</td><td>15.74</td><td>12.38</td><td>13.72</td><td>12.25</td><td>17.26</td><td>16.28</td></tr>
+            <tr><td>Qwen2.5</td><td>-</td><td>32B</td><td>17.59</td><td>22.49</td><td>19.37</td><td>16.82</td><td>15.76</td><td>13.14</td><td>18.92</td><td>19.11</td></tr>
+            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Proprietary Models</i></td></tr>
+            <tr><td>Gemini-2.5-Pro</td><td>-</td><td>-</td><td>55.07</td><td>58.37</td><td>47.22</td><td>59.09</td><td>41.94</td><td>34.74</td><td>54.86</td><td>62.57</td></tr>
+            <tr><td>o4-mini</td><td>-</td><td>-</td><td>51.31</td><td>42.44</td><td>52.63</td><td>52.60</td><td>53.58</td><td>33.95</td><td>56.62</td><td>55.77</td></tr>
+            <tr><td>Gemini-1.5-Pro</td><td>-</td><td>-</td><td>48.19</td><td>37.21</td><td>53.14</td><td>48.48</td><td>47.85</td><td>28.99</td><td>56.78</td><td>52.24</td></tr>
+            <tr><td>GPT-4o</td><td>-</td><td>-</td><td>44.54</td><td>45.62</td><td>39.85</td><td>44.30</td><td>47.94</td><td>27.74</td><td>49.84</td><td>46.78</td></tr>
+            <tr><td>Gemini-1.5-Flash</td><td>-</td><td>-</td><td>40.00</td><td>37.21</td><td>43.43</td><td>39.60</td><td>39.23</td><td>26.57</td><td>45.73</td><td>42.93</td></tr>
+            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Proprietary Models with Chain-of-Thought Reasoning</i></td></tr>
+            <tr><td>Gemini-1.5-Pro (CoT)</td><td>-</td><td>-</td><td>53.68</td><td>44.19</td><td>53.71</td><td>54.95</td><td>54.55</td><td>41.55</td><td>63.32</td><td>54.74</td></tr>
+            <tr><td>GPT-4o (CoT)</td><td>-</td><td>-</td><td>51.50</td><td>47.67</td><td>55.43</td><td>50.10</td><td>53.11</td><td>33.82</td><td>58.79</td><td>55.46</td></tr>
+            <tr><td>Gemini-1.5-Flash (CoT)</td><td>-</td><td>-</td><td>48.39</td><td>40.70</td><td>52.00</td><td>49.49</td><td>45.39</td><td>35.75</td><td>58.79</td><td>49.37</td></tr>
+            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Open-Source Models</i></td></tr>
+            <tr><td>InternVL2.5-8B</td><td>InternLM2.5</td><td>7B</td><td>35.14</td><td>37.94</td><td>34.47</td><td>38.45</td><td>31.70</td><td>18.75</td><td>45.71</td><td>38.12</td></tr>
+            <tr><td>LLaVA-NeXt-Video-DPO</td><td>Qwen2</td><td>7B</td><td>33.10</td><td>34.42</td><td>29.10</td><td>37.78</td><td>32.11</td><td>19.64</td><td>43.22</td><td>35.11</td></tr>
+            <tr><td>Qwen2.5-VL-7B</td><td>Qwen2.5</td><td>7B</td><td>31.91</td><td>32.37</td><td>30.49</td><td>33.77</td><td>28.10</td><td>13.38</td><td>41.54</td><td>35.97</td></tr>
+            <tr><td>XComposer2</td><td>InternLM2</td><td>7B</td><td>28.40</td><td>26.81</td><td>26.77</td><td>32.38</td><td>21.95</td><td>17.82</td><td>36.11</td><td>30.11</td></tr>
+            <tr><td>mPLUG-Owl3</td><td>Qwen2</td><td>7B</td><td>27.10</td><td>29.69</td><td>28.62</td><td>24.68</td><td>30.28</td><td>22.35</td><td>34.16</td><td>26.84</td></tr>
+            <tr><td>InternVL2-8B</td><td>InternLM2.5</td><td>7B</td><td>26.16</td><td>31.09</td><td>26.48</td><td>33.41</td><td>22.18</td><td>17.72</td><td>34.59</td><td>26.77</td></tr>
+            <tr><td>Qwen-VL</td><td>Qwen</td><td>7B</td><td>25.78</td><td>26.11</td><td>27.23</td><td>21.92</td><td>20.75</td><td>16.88</td><td>29.01</td><td>28.44</td></tr>
+            <tr><td>VideoChat2-Mistral-7B</td><td>Mistral</td><td>7B</td><td>25.69</td><td>28.03</td><td>24.11</td><td>27.85</td><td>19.91</td><td>12.37</td><td>37.94</td><td>26.75</td></tr>
+            <tr><td>LongVA-7B-DPO</td><td>Qwen2</td><td>7B</td><td>24.60</td><td>26.82</td><td>24.51</td><td>23.78</td><td>20.30</td><td>13.24</td><td>29.81</td><td>27.44</td></tr>
+            <tr><td>Video-LLaVA-7B</td><td>Vicuna</td><td>7B</td><td>23.73</td><td>27.11</td><td>23.23</td><td>24.54</td><td>22.01</td><td>21.02</td><td>25.87</td><td>24.41</td></tr>
+            <tr><td>LLaVA-NeXT-Video</td><td>Qwen2</td><td>7B</td><td>23.44</td><td>26.75</td><td>21.96</td><td>28.60</td><td>25.43</td><td>15.33</td><td>26.61</td><td>25.78</td></tr>
+            <tr><td>InstructBLIP-7B</td><td>Vicuna</td><td>7B</td><td>21.14</td><td>20.58</td><td>23.01</td><td>22.55</td><td>18.28</td><td>12.93</td><td>28.44</td><td>21.98</td></tr>
+            <tr><td>Video-ChatGPT</td><td>Vicuna</td><td>7B</td><td>21.12</td><td>23.86</td><td>21.79</td><td>17.68</td><td>19.35</td><td>14.90</td><td>27.82</td><td>21.42</td></tr>
+            <tr><td>LongVA-7B</td><td>Qwen2</td><td>7B</td><td>20.37</td><td>24.41</td><td>22.98</td><td>19.99</td><td>17.52</td><td>12.20</td><td>25.77</td><td>21.86</td></tr>
+            <tr><td>Xcomposer</td><td>InternLM</td><td>7B</td><td>16.79</td><td>17.36</td><td>18.47</td><td>16.80</td><td>14.27</td><td>11.19</td><td>21.94</td><td>18.35</td></tr>
+            </tbody></table>
+
+        <!-- <p style="margin-top: -20px;">
+          <strong style="color: #22a56e; font-size: 18px;" >Green date</strong> indicates the newly added/updated models  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+          - indicates closed-source models
+        </p>
+
+        <p style=" text-align: left;">
+          1* The short and medium videos are sampled at 1 fps, while the long videos are sampled at 0.5 fps to ensure the stability of the API.
+          </br>2* The videos less than 384 seconds are sampled at 1 fps, and for those longer than 384 seconds, we extract 384 frames uniformly. All the frames are resized to 512x512 resolution to fit within GPT-4o’s max context length.
+          </br>3* The videos are sampled at 2 fps, and the upper limit is 768 frames.
+          </br>4* The videos are sampled at 1 fps, and the upper limit is 600 frames.
+          </br>5* The videos are sampled at 2 fps, and the upper limit is 480 frames.
+        </p> -->
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DATASET SECTION -->
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+  <h1 class="title is-1 mathvista_other">
+    <span class="mathvista_other" style="vertical-align: middle">Benchmark</span>
+  </h1>
+  </div>
+</section>
+            
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths" style="width: 100%;">
+        <h2 class="title is-3">Data Examples</h2>
+        <div class="content has-text-justified">
+          <!-- <p style="text-align: center;", class="mt-3"><strong>All data are newly collected and annotated by humans, not from any existing video dataset.</strong> -->
+          <!-- </p> -->
+
+        <div id="results-carousel" class="carousel results-carousel">  
+          
+            <div class="content has-text-centered">
+
+              <img src="static/images/teaser.png" style="width: 95%;"/>
+              <p style="margin-bottom: 30px;">🔗 Full Video Link:&nbsp;&nbsp;<a href="https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium">https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium</a></p>
+              <!-- <p style="margin-bottom: 30px;">🔗<a href="https://www.youtube.com/watch?v=VFntoBRGF1A">Full Video Link</a></p> -->
+            
+            </div>
+          
+            <div class="content has-text-centered">
+
+              <img src="static/images/teaser.png" style="width: 95%;"/>
+              <p style="margin-bottom: 30px;">🔗 Full Video Link:&nbsp;&nbsp;<a href="https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium">https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium</a></p>
+              <!-- <p style="margin-bottom: 30px;">🔗<a href="https://www.youtube.com/watch?v=VFntoBRGF1A">Full Video Link</a></p> -->
+            
+            </div>
+
+
+        </div>
+
+          
+        </div>
+      </div> 
+
+        </div>
+      </div>
+    </div>
+    
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content has-text-centered">
+          <h2 class="title is-3" style="margin-top: 30px;">Benchmark Statistics</h2>
+         
+          
+          <img src="static/images/stats.png" alt="data-composition" style="max-width: 80%;"/>
+          <!-- bing tu -->
+          <!-- <div class="container-wrapper">
+            <div id="container"></div>
+            <div id="image-container">
+              <img src="static/images/stats.png" alt="data-composition" style="max-width: 60%; display: inline-block; margin-right: 200px;"/>
+            </div>
+          </div>
+        <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.0/files/dist/echarts.min.js"></script>
+        <script type="text/javascript" src="static/js/bingtu.js"></script> -->
+
+        <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;"> 
+            (Left) <strong>Video Categorie Hierarchy</strong>: Video-MME consists of 6 key domains and 30 subcategories of video types. <br> (Right) <strong>Video Duration and Task Type Distributions</strong>: Video-MME spans a full spectrum of video lengths and assesses various core abilities of MLLMs.<br/>
+        </p> -->
+
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content has-text-centered">
+          <h2 class="title is-3">Benchmark Comparison</h2>
+          <!-- <img src="static/images/dataset_cl.jpg" alt="data-composition" style="max-width: 30%;"/> -->
+          <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;" >
+            Analysis of Certificate Length in seconds. Avg. V.L.: average video length, Med. C.L.: median certificate length, Avg. C.L.: average certificate length.
+          </p> -->
+
+          <img src="static/images/compare.png" alt="data-composition" style="max-width: 80%;"/>
+          <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;" >
+            The comparison of various benchmarks encompasses several key aspects: 
+                the total number of videos, the number of clips, the average duration of the videos, the method of video annotation (manual denoted as M, automated as A), 
+                the average number of QA pair tokens, the average number of subtitle tokens, whether the videos cover multiple duration levels, 
+                whether the videos are sourced from a broad range of open domains, and whether provide subtitle together with audio information. 
+                It is important to note that if a dataset includes multiple task formats, our comparison focuses solely on the multiple-choice segment.
+          </p> -->
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- RESULTS SECTION
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-1 mathvista_other">Experiment Results</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Different Question Types</h2>
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/exp_results/results_of_question_types_0616.png" alt="grade-lv" width="50%"/>
+              <p>Evaluation results of four representative MLLMs.</p>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered m-6">
+      <div class="column is-full has-text-centered content">
+        <h2 class="title is-3">Different Video Duration Types</h2>
+
+          <div class="box m-5">
+            <div class="content has-text-centered">
+              <img src="static/images/exp_results/results_of_video_types.png" alt="" width="80%"/>
+              <p>Evaluation results of Gemini 1.5 Pro.</p>
+            </div>
+          </div>
+
+          <div class="box m-5">
+            
+            <div id="results-carousel" class="carousel results-carousel">  
+            
+              <div class="content has-text-centered">
+                <img src="static/images/exp_results/results_of_video_sub_types-1.jpg" alt="" width="70%"/>
+                <p style="margin-bottom: 30px;">(1) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
+              </div>
+            
+              <div class="content has-text-centered">
+                <img src="static/images/exp_results/results_of_video_sub_types-2.jpg" alt="" width="70%"/>
+                <p style="margin-bottom: 30px;">(2) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
+              </div>
+
+              <div class="content has-text-centered">
+                <img src="static/images/exp_results/results_of_video_sub_types-3.jpg" alt="" width="70%"/>
+                <p style="margin-bottom: 30px;">(3) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
+              </div>
+
+            </div>
+
+          </div>
+
+      </div>
+    </div>
+
+  </div>
+</section> -->
+
+
+<!-- </section>
+<section class="hero is-light is-small">
+  <div class="hero-body has-text-centered">
+    <h1 class="title is-1 mathvista_other" id="citation">Citation</h1>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <pre><code>
+    @article{fu2024video,
+      title={Video-MME: The First-Ever Comprehensive Evaluation Benchmark of Multi-modal LLMs in Video Analysis},
+      author={Fu, Chaoyou and Dai, Yuhan and Luo, Yondong and Li, Lei and Ren, Shuhuai and Zhang, Renrui and Wang, Zihan and Zhou, Chenyu and Shen, Yunhang and Zhang, Mengdan and others},
+      journal={arXiv preprint arXiv:2405.21075},
+      year={2024}
+    }
+</code></pre>
+  </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container" style="width: 60%;">
+  <style>
+      pre {
+        background-color: #f4f4f4;
+        padding: 5px; /* 调整padding为5px */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow-x: auto; /* 允许水平滚动 */
+    }
+    code {
+        font-family: Consolas, "Courier New", monospace;
+        color: #d63384; /* 代码文本颜色 */
+    }
+  </style>
+
+
+  </div>
+</section>
+
+
+<footer class="footer">
+  <!-- <div class="container"> -->
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p style="text-align: center;">
+            This website is adapted from <a href="https://mathvista.github.io/">MathVista</a>, licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  <!-- </div> -->
+</footer>
+
+</body>
+</html>
+
