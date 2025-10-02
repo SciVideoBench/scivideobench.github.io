@@ -1315,7 +1315,7 @@
                 <div class="overview-figure">
                     <img src="static/images/example_v2.png" alt="SciVideoBench Overview Diagram" />
                     <div class="figure-caption">
-                        <strong>Figure 2:</strong> Data collection and annotation pipeline for SciVideoBench, showing the tri-modal alignment of video, audio, and text sources.
+                        <strong>Figure 2:</strong> Examples of SciVideoBench, including videos from 4 disciplines (Physics, Biology, Chemistry, and Medicine), which involve 19 different subjects. The research-level QAs challenge LMMs in three different aspects (\textit{Conceptual, Hypothetical, and Quantitative}) that are of vital importance in scientific experiment video understanding..
                     </div>
                 </div>
             </div>
@@ -1419,7 +1419,7 @@
                     <div class="analysis-text-box">
                         <h3 class="analysis-subtitle">Performance by Domain</h3>
                         <p>
-                            Detailed analysis of model performance across different scientific domains reveals significant variations in reasoning capabilities. Physics and chemistry tasks show higher performance due to their more structured nature, while biology and medicine present unique challenges with complex visual patterns and domain-specific knowledge requirements.
+                            Chain-of-Thought performance gains across proprietary models and open-source models. An obvious difference between proprietary models across all the reasoning aspects can be observed; while for open-source models, quantitative reasoning has a notable performance boost, while the other two reasoning aspects have negative impacts. This phenomenon again demonstrates that the quantitative settings in SciVideoBench require sophisticated multi-step reasoning that can benefit a lot from chain-of-thought prompts.
                         </p>
                     </div>
                 </div>
@@ -1431,7 +1431,7 @@
                     <div class="analysis-text-box">
                         <h3 class="analysis-subtitle">Reasoning Type Analysis</h3>
                         <p>
-                            Comparative analysis across conceptual, hypothetical, and quantitative reasoning types demonstrates that current LMMs excel at conceptual understanding but struggle with quantitative calculations and hypothetical scenario reasoning, highlighting critical areas for improvement in multimodal AI systems.
+                            The impact of LLM backbones on the performance. Larger models reliably boost conceptual/hypothetical reasoning, but quantitative gains remain weak and non-monotonic across series.
                         </p>
                     </div>
                 </div>
