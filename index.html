@@ -1599,8 +1599,10 @@
         // Leaderboard data
         const modelData = [
             // Proprietary Models
-            {model: "Gemini-2.0-Pro", llm: "-", size: "-", overall: 64.3, physics: 69.73, chemistry: 67.79, biology: 64.79, medicine: 74.77, conceptual: 61.82, hypothetical: 74.77, quantitative: 61.44},
+            {model: "Gemini-2.5-Pro", llm: "-", size: "-", overall: 64.3, physics: 69.73, chemistry: 67.79, biology: 64.79, medicine: 74.77, conceptual: 61.82, hypothetical: 74.77, quantitative: 61.44},
             {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 46.4, physics: 50.81, chemistry: 44.16, biology: 44.01, medicine: 55.14, conceptual: 49.70, hypothetical: 55.14, quantitative: 44.83},
+            {model: "Gemini-1.5-Pro", llm: "-", size: "-", overall: 27.5, physics: 27.84, chemistry: 28.31, biology: 27.38, medicine: 27.10, conceptual: 26.06, hypothetical: 27.10, quantitative: 28.53},
+            {model: "GPT-4o", llm: "-", size: "-", overall: 24.9, physics: 30.27, chemistry: 28.05, biology: 21.52, medicine: 31.78, conceptual: 29.70, hypothetical: 31.78, quantitative: 24.45},
             // Open Source 78B+
             {model: "InternVL-3-78B-Instruct", llm: "Qwen2.5", size: "72B", overall: 38.8, physics: 57.30, chemistry: 39.74, biology: 37.90, medicine: 46.73, conceptual: 39.39, hypothetical: 46.73, quantitative: 36.99},
             {model: "InternVL-3-78B", llm: "Qwen2.5", size: "72B", overall: 38.5, physics: 56.76, chemistry: 39.22, biology: 37.65, medicine: 46.73, conceptual: 37.58, hypothetical: 46.73, quantitative: 37.30},
@@ -1614,12 +1616,10 @@
             {model: "InternVL-3-8B-Instruct", llm: "Qwen2.5", size: "7B", overall: 29.4, physics: 43.78, chemistry: 29.35, biology: 26.16, medicine: 34.58, conceptual: 31.52, hypothetical: 34.58, quantitative: 30.72},
             {model: "InternVL-3-9B-Instruct", llm: "InternLM3", size: "8B", overall: 29.2, physics: 40.27, chemistry: 30.91, biology: 29.10, medicine: 33.64, conceptual: 29.70, hypothetical: 33.64, quantitative: 27.69},
             // Proprietary continued
-            {model: "Gemini-1.5-Pro", llm: "-", size: "-", overall: 27.5, physics: 27.84, chemistry: 28.31, biology: 27.38, medicine: 27.10, conceptual: 26.06, hypothetical: 27.10, quantitative: 28.53},
             {model: "InternVL-3-9B", llm: "InternLM3", size: "8B", overall: 27.2, physics: 38.65, chemistry: 27.79, biology: 25.67, medicine: 31.78, conceptual: 26.06, hypothetical: 31.78, quantitative: 28.21},
             {model: "InternVL2-Llama3-76B", llm: "Hermes2", size: "70B", overall: 26.3, physics: 28.38, chemistry: 27.01, biology: 24.94, medicine: 29.91, conceptual: 29.70, hypothetical: 29.91, quantitative: 25.08},
             {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 25.7, physics: 28.38, chemistry: 24.94, biology: 24.69, medicine: 22.43, conceptual: 26.06, hypothetical: 22.43, quantitative: 27.90},
             {model: "InternVideo2.5-Chat-8B", llm: "Qwen2.5", size: "7B", overall: 25.3, physics: 37.84, chemistry: 23.12, biology: 20.29, medicine: 31.78, conceptual: 23.64, hypothetical: 31.78, quantitative: 30.41},
-            {model: "GPT-4o", llm: "-", size: "-", overall: 24.9, physics: 30.27, chemistry: 28.05, biology: 21.52, medicine: 31.78, conceptual: 29.70, hypothetical: 31.78, quantitative: 24.45},
             // Open Source smaller models
             {model: "InternVL-3-2B-Instruct", llm: "Qwen2.5", size: "1.5B", overall: 24.0, physics: 31.08, chemistry: 23.90, biology: 24.21, medicine: 23.36, conceptual: 21.82, hypothetical: 23.36, quantitative: 25.08},
             {model: "InternVL2-40B", llm: "Hermes2", size: "34B", overall: 23.8, physics: 28.38, chemistry: 23.64, biology: 22.74, medicine: 30.84, conceptual: 21.82, hypothetical: 30.84, quantitative: 23.82},
