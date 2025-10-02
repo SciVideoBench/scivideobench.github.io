@@ -1,644 +1,1769 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> SciVideoBench </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SciVideoBench - Benchmarking Scientific Video Reasoning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- <link rel="icon" href="./static/images/video-mme.png"> -->
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(10,10,10,0.95) 0%, rgba(20,20,40,0.95) 100%),
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><defs><filter id="glow"><feGaussianBlur stdDeviation="4" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect fill="%23000814" width="1920" height="1080"/><g opacity="0.3"><circle cx="300" cy="200" r="150" fill="none" stroke="%2300ffcc" stroke-width="0.5"/><circle cx="300" cy="200" r="180" fill="none" stroke="%2300ffcc" stroke-width="0.3"/><circle cx="300" cy="200" r="210" fill="none" stroke="%2300ffcc" stroke-width="0.2"/></g><g opacity="0.4"><path d="M100 500 Q 300 400 500 500 T 900 500" stroke="%236600ff" stroke-width="1" fill="none" filter="url(%23glow)"/><path d="M200 600 Q 400 500 600 600 T 1000 600" stroke="%23ff00ff" stroke-width="1" fill="none" filter="url(%23glow)"/></g><g opacity="0.2"><rect x="1200" y="300" width="200" height="200" fill="none" stroke="%2300ccff" stroke-width="0.5" transform="rotate(45 1300 400)"/><rect x="1220" y="320" width="160" height="160" fill="none" stroke="%2300ccff" stroke-width="0.3" transform="rotate(45 1300 400)"/></g><g opacity="0.3"><line x1="0" y1="800" x2="200" y2="700" stroke="%23ffcc00" stroke-width="0.5"/><line x1="200" y1="700" x2="400" y2="750" stroke="%23ffcc00" stroke-width="0.5"/><line x1="400" y1="750" x2="600" y2="650" stroke="%23ffcc00" stroke-width="0.5"/><circle cx="200" cy="700" r="3" fill="%23ffcc00"/><circle cx="400" cy="750" r="3" fill="%23ffcc00"/><circle cx="600" cy="650" r="3" fill="%23ffcc00"/></g></svg>');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
 
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="stylesheet" href="./static/css/leaderboard.css">
-  <link rel="stylesheet" href="./static/css/video-player.css">
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 
-  <!-- <link href="https://unpkg.com/tabulator-tables@5.5.2/dist/css/tabulator_bulma.min.css" rel="stylesheet">
-  <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.2/dist/js/tabulator.min.js"></script> -->
-  <script type="text/javascript" src="static/js/sort-table.js" defer></script>
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(0,255,204,0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/explorer-index.js"></script>
-  <script src="./static/js/question_card.js"></script>
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            to {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
 
-  <script src="./static/js/leaderboard_testmini.js"></script>  
-  <script src="./data/results/output_folders.js" defer></script>
-  <script src="./data/results/model_scores.js" defer></script>
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-  <script src="./visualizer/data/data_public.js" defer></script>
+        .title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00ffcc 0%, #6600ff 50%, #ff00ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
 
-  <style>
-    .no-sort {
-        cursor: default;
-        pointer-events: none;
-        background-image: none !important; /* Remove the sort arrow */
-    }
-  </style>
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 20px rgba(0,255,204,0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(102,0,255,0.7));
+            }
+        }
 
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a0a0b8;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        /* Authors Section */
+        .authors-section {
+            margin: 2rem 0 3rem 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.6s;
+        }
+
+        .authors-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .author {
+            color: #ffffff;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .author sup {
+            color: #00ffcc;
+            font-weight: 600;
+            margin-right: 2px;
+        }
+
+        .affiliations {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            color: #a0a0b8;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .affiliation {
+            white-space: nowrap;
+        }
+
+        .affiliation sup {
+            color: #6600ff;
+            font-weight: 600;
+            margin-right: 2px;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0 3rem 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.8s;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 20px 40px rgba(0,255,204,0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffcc, #6600ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #a0a0b8;
+            margin-top: 0.5rem;
+        }
+
+        /* Dataset Showcase Section */
+        .showcase-section {
+            padding: 4rem 0;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .showcase-section .container {
+            max-width: 100%;
+            padding: 0 3rem;
+        }
+
+        .gif-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: none;
+        }
+
+        .gif-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 200px;
+        }
+
+        .gif-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,255,204,0.3);
+            border-color: #00ffcc;
+            z-index: 10;
+        }
+
+        .gif-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gif-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.6) 30%, transparent);
+            padding: 1.2rem;
+            display: flex;
+            align-items: flex-end;
+            height: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .gif-item:hover .gif-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7) 40%, transparent);
+        }
+
+        .gif-label {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            transition: color 0.3s ease;
+        }
+
+        .gif-item:hover .gif-label {
+            color: #00ffcc;
+        }
+
+        @media (max-width: 1400px) {
+            .showcase-section .container {
+                padding: 0 2rem;
+            }
+            
+            .gif-grid {
+                gap: 1.25rem;
+            }
+            
+            .gif-item {
+                min-height: 180px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .gif-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .gif-item {
+                min-height: 160px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .showcase-section .container {
+                padding: 0 1rem;
+            }
+            
+            .gif-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .gif-item {
+                min-height: 140px;
+                aspect-ratio: 4/3;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gif-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .gif-item {
+                min-height: 120px;
+            }
+        }
+
+        /* Abstract Section */
+        .abstract-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(10,10,10,0.5) 0%, rgba(20,20,40,0.5) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .abstract-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .abstract-box {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .abstract-box:hover {
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 15px 40px rgba(102,0,255,0.2);
+        }
+
+        .abstract-box p {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .abstract-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .abstract-box strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        .teaser-figure {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .teaser-figure:hover {
+            box-shadow: 0 20px 40px rgba(0,255,204,0.2);
+            transform: translateY(-5px);
+        }
+
+        .teaser-figure img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .figure-caption {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #a0a0b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .figure-caption strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .abstract-box {
+                padding: 2rem;
+            }
+
+            .abstract-box p {
+                font-size: 1rem;
+            }
+
+            .teaser-figure {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Overview Section */
+        .overview-section {
+            padding: 5rem 0;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .overview-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .overview-box {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .overview-box:hover {
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 15px 40px rgba(102,0,255,0.2);
+        }
+
+        .overview-box p {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .overview-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .overview-box strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        .overview-box em {
+            color: #ff00ff;
+            font-style: italic;
+        }
+
+        .overview-box sup {
+            font-size: 0.8em;
+        }
+
+        .overview-box a {
+            color: #00ffcc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .overview-box a:hover {
+            color: #6600ff;
+            text-decoration: underline;
+        }
+
+        .overview-figure {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overview-figure:hover {
+            box-shadow: 0 20px 40px rgba(0,255,204,0.2);
+            transform: translateY(-5px);
+        }
+
+        .overview-figure img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .overview-figure .figure-caption {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #a0a0b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .overview-figure .figure-caption strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .overview-section {
+                padding: 3rem 0;
+            }
+
+            .overview-box {
+                padding: 2rem;
+            }
+
+            .overview-box p {
+                font-size: 1rem;
+            }
+
+            .overview-figure {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Statistics Section */
+        .statistics-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(20,20,40,0.3) 0%, rgba(10,10,10,0.3) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .statistics-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .statistics-box {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .statistics-box:hover {
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 15px 40px rgba(102,0,255,0.2);
+        }
+
+        .statistics-box p {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .statistics-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .statistics-box strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        .statistics-box em {
+            color: #ff00ff;
+            font-style: italic;
+        }
+
+        .statistics-figure {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .statistics-figure:hover {
+            box-shadow: 0 20px 40px rgba(0,255,204,0.2);
+            transform: translateY(-5px);
+        }
+
+        .statistics-figure img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .statistics-figure .figure-caption {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #a0a0b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .statistics-figure .figure-caption strong {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .statistics-section {
+                padding: 3rem 0;
+            }
+
+            .statistics-box {
+                padding: 2rem;
+            }
+
+            .statistics-box p {
+                font-size: 1rem;
+            }
+
+            .statistics-figure {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00ffcc, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .leaderboard {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table thead {
+            background: rgba(102,0,255,0.2);
+        }
+
+        .leaderboard-table th {
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #00ffcc;
+            border-bottom: 2px solid rgba(0,255,204,0.3);
+            position: relative;
+        }
+
+        .leaderboard-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .leaderboard-table th.sortable:hover {
+            background: rgba(0,255,204,0.1);
+        }
+
+        .category-header {
+            text-align: center;
+            background: rgba(102,0,255,0.1);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sub-header {
+            font-size: 0.85rem;
+            padding: 1rem;
+        }
+
+        .sort-arrow {
+            margin-left: 5px;
+            font-size: 0.8em;
+            color: #ffcc00;
+        }
+
+        .baseline-row {
+            background: rgba(102,0,255,0.15);
+            font-weight: 600;
+        }
+
+        .human-row {
+            background: rgba(0,255,204,0.15);
+            border-bottom: 3px solid rgba(0,255,204,0.3);
+        }
+
+        .leaderboard-table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.3s ease;
+        }
+
+        .leaderboard-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-table tbody tr:hover {
+            background: rgba(102,0,255,0.1);
+            transform: scale(1.02);
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #ffcc00;
+            font-size: 1.2rem;
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        .model-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .score {
+            font-weight: 600;
+            color: #00ffcc;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffcc, #6600ff);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Analysis Section */
+        .analysis {
+            margin-bottom: 5rem;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .analysis-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .analysis-figure {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-figure:hover {
+            box-shadow: 0 20px 40px rgba(0,255,204,0.2);
+            transform: translateY(-5px);
+        }
+
+        .analysis-figure img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .analysis-text-box {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-text-box:hover {
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 15px 30px rgba(102,0,255,0.2);
+        }
+
+        .analysis-subtitle {
+            font-size: 1.3rem;
+            color: #00ffcc;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-text-box p {
+            color: #e0e0e0;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        @media (max-width: 1024px) {
+            .analysis-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .analysis-figure {
+                padding: 1rem;
+            }
+
+            .analysis-text-box {
+                padding: 1.5rem;
+            }
+
+            .analysis-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .analysis-text-box p {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Examples Section */
+        .examples-section {
+            margin-bottom: 5rem;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .example-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,255,204,0.3);
+        }
+
+        .video-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(102,0,255,0.3), rgba(0,255,204,0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            background: #00ffcc;
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 20px solid #000;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 5px;
+        }
+
+        .example-content {
+            padding: 1.5rem;
+        }
+
+        .example-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #00ffcc;
+        }
+
+        .example-description {
+            color: #a0a0b8;
+            line-height: 1.6;
+        }
+
+        .tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(102,0,255,0.2);
+            border: 1px solid rgba(102,0,255,0.4);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #00ffcc;
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .primary-cta {
+            background: linear-gradient(135deg, #00ffcc, #6600ff);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102,0,255,0.3);
+        }
+
+        .primary-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102,0,255,0.5);
+        }
+
+        .secondary-cta {
+            background: transparent;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+        }
+
+        .secondary-cta:hover {
+            background: rgba(0,255,204,0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Institutions Section */
+        .institutions-section {
+            margin: 5rem 0;
+            padding: 3rem 0;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .institutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .institution-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            width: 140px;
+            height: 140px;
+        }
+
+        .institution-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 10px 30px rgba(102,0,255,0.2);
+        }
+
+        .institution-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .authors-list {
+                font-size: 0.95rem;
+                gap: 1rem;
+            }
+            
+            .affiliations {
+                font-size: 0.9rem;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .institutions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            .institution-card {
+                width: 120px;
+                height: 120px;
+                padding: 1rem;
+            }
+            
+            .viz-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard-table {
+                font-size: 0.9rem;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 1rem 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  
-
-<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-
-      <div class="navbar-item has-dropdown is-hoverable">
-        <p style="font-size:18px; display: inline; margin-right: -2px; margin-top: 12px;">🔥</p>
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models">
-            <b>MME</b> 
-          </a>
-          <a class="navbar-item" href="https://github.com/BradyFU/Awesome-Multimodal-Large-Language-Models">
-            <b>Awesome-MLLM</b> 
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</nav> -->
-
-
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title is-bold">
-            <!-- <img src="static/images/video-mme.png" style="width:1.6em;vertical-align: middle" alt="Logo"/> -->
-            <span class="video-mme" style="vertical-align: middle">SciVideoBench</span>
-            </h1>
-          <h2 class="subtitle is-3 publication-subtitle", style="margin-bottom: 20px;">
-            Benchmarking Scientific Video Reasoning <br> in Large Multimodal Models
-          </h2>
-          
-          <!-- <div class="is-size-5 publication-authors", style="width: 80%; margin: 20px auto;", >
-            <span class="author-block", style="font-size:24px"><a href="https://github.com/MME-Benchmarks/Video-MME">V</a></span>
-
-        </div> -->
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup style="color:#6fbf73;">1</sup>Andong Deng</span>
-            <span class="author-block"><sup style="color:#ed4b82">2</sup>Taojiannan Yang,</span>
-            <span class="author-block"><sup style="color:#9400D3">3</sup>Shoubin Yu</span>
-            <span class="author-block"><sup style="color:#6fbf73;">1</sup>Lincoln Spencer</span><br>
-            <span class="author-block"><sup style="color:#9400D3">3</sup>Mohit Bansal</span>
-            <span class="author-block"><sup style="color:#6fbf73;">1</sup>Chen Chen</span> 
-            <span class="author-block"><sup style="color:#ffac33">4</sup>Serena Yeung-Levy</span>
-            <span class="author-block"><sup style="color:#ffac33">4</sup>Xiaohan Wang</span><br>
-          </div>
-
-          <br>
-
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">UCF<sup style="color:#6fbf73;">1</sup></span>
-            <span class="author-block">Amazon<sup style="color:#ed4b82">2</sup></span>
-            <span class="author-block">UNC Chapel Hill<sup style="color:#9400D3">3</sup></span>
-            <span class="author-block">Stanford<sup style="color:#ffac33">4</sup></span><br>
-          </div>
-
-
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- PDF Link. -->
-              <span class="link-block">
-                <a href=""
-                   class="external-link button is-normal is-rounded is-dark">
-                <!-- <a href="https://lupantech.github.io/papers/arxiv23_mathvista.pdf"
-                   class="external-link button is-normal is-rounded is-dark"> -->
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv (coming soon)</span>
-                </a>
-              </span>
-              <!-- Code Link. -->
-              <!-- <span class="link-block">
-                <a href="https://github.com/MME-Benchmarks/Video-MME"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>GitHub</span>
-                  </a>
-              </span> -->
-              <!-- Leaderboard Link. -->
-              <span class="link-block">
-                <a href="#leaderboard"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <p style="font-size:18px">🏆</p>
-                  </span>
-                  <span>Leaderboard</span>
-                </a>
-              </span>
-
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-particles"></div>
+        <div class="hero-content">
+            <h1 class="title">SciVideoBench</h1>
+            <p class="subtitle">Benchmarking Scientific Video Reasoning in Large Multimodal Models</p>
+            
+            <!-- Authors Section -->
+            <div class="authors-section">
+                <div class="authors-list">
+                    <span class="author"><sup>1</sup>Andong Deng</span>
+                    <span class="author"><sup>2</sup>Taojiannan Yang</span>
+                    <span class="author"><sup>3</sup>Shoubin Yu</span>
+                    <span class="author"><sup>1</sup>Lincoln Spencer</span>
+                    <span class="author"><sup>3</sup>Mohit Bansal</span>
+                    <span class="author"><sup>1</sup>Chen Chen</span>
+                    <span class="author"><sup>4</sup>Serena Yeung-Levy</span>
+                    <span class="author"><sup>4</sup>Xiaohan Wang</span>
+                </div>
+                <div class="affiliations">
+                    <span class="affiliation"><sup>1</sup>UCF</span>
+                    <span class="affiliation"><sup>2</sup>Amazon</span>
+                    <span class="affiliation"><sup>3</sup>UNC Chapel Hill</span>
+                    <span class="affiliation"><sup>4</sup>Stanford</span>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">15K+</div>
+                    <div class="stat-label">Scientific Videos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Task Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">25</div>
+                    <div class="stat-label">Model Evaluations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">94.2%</div>
+                    <div class="stat-label">Human Baseline</div>
+                </div>
             </div>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<section class="section">
-  <div class="container" style="margin-bottom: 2vh;">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          Large Multimodal Models (LMMs) have achieved remarkable progress across various capabilities,
-however, video reasoning remains a significant and challenging frontier. Current video benchmarks
-predominantly target general domains with relatively simple reasoning tasks, leading to saturation
-and thus failing to effectively evaluate advanced multimodal cognitive skills. To address this critical
-gap, we introduce SciVideoBench, a rigorous benchmark specifically designed to assess advanced
-video reasoning in scientific contexts. SciVideoBench consists of 965 carefully crafted multiple-choice
-questions derived from cutting-edge experimental videos spanning over 19 specialized academic subjects.
-Each question demands sophisticated domain-specific knowledge, precise spatiotemporal perception,
-and intricate logical reasoning, effectively challenging models' higher-order cognitive abilities. Our
-evaluation highlights significant performance deficits in state-of-the-art proprietary and open-source
-LMMs, including Gemini 2.5 Pro and Qwen2.5-VL, indicating substantial room for advancement in
-video reasoning capabilities. Detailed analyses of critical factors such as reasoning complexity and visual
-grounding provide valuable insights and clear direction for future developments in LMMs, driving the
-evolution of truly capable multimodal AI co-scientists
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-</div>
-</section>
-
-
-
-<section class="section">
-  <div class="container" style="margin-bottom: 2vh;">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Introduction</h2>
-        <div class="content has-text-justified">
-
-          Large Multimodal Models (LMMs) have demonstrated rapid advancements
-          across a diverse range of capabilities, including conversational interaction, code genera-
-          tion, mathematical reasoning, and image understanding. Among the various
-          input modalities, video presents a particularly rich and complex form of multimodal data, uniquely
-          integrating temporal dynamics, spatial perception, and high-level semantic reasoning. Consequently,
-          video understanding has emerged as a critical frontier, pivotal for advancing LMMs towards next-
-          generation applications in fields such as robotics, interactive education, and scientific discovery. <br><br>
-
-          To evaluate the performance of LMMs, numerous video benchmarks have been developed. However, the majority of existing benchmarks concentrate on
-          relatively general domains—such as movies, daily activities, and instructional
-          content—and primarily emphasize tasks like temporal grounding, common-sense reasoning, and
-          event understanding. While these benchmarks once posed significant challenges, current state-of-the-
-          art LMMs now exhibit saturated performance, achieving accuracies exceeding 85% on popular
-          datasets like VideoMME. <br> <br>
-
-          More recent initiatives have begun to incorporate scientific and educational videos
-          to assess deeper domain knowledge and reasoning. Nevertheless, most of this content remains at
-          a college level, allowing LMMs to achieve success largely through memorized knowledge with
-          minimal reliance on genuine visual perception. As a result, current benchmarks inadequately evaluate
-          sophisticated cognitive skills that necessitate expert-level knowledge, intricate logical reasoning, and
-          precise visual perception. <br><br>
-
-          To address this critical gap, we introduce SCIVIDEOBENCH, an innovative benchmark specifically
-          designed to rigorously assess advanced video reasoning capabilities. SCIVIDEOBENCH consists of
-          965 meticulously crafted multiple-choice questions derived from research-level experimental videos
-          in physics, chemistry, biology, and medicine. These videos are sourced from 19 distinct academic
-          disciplines, including Fluid Mechanics, Analytical Chemistry, Neuroscience, and Cancer Research.
-          Each question is categorized into one of three types: quantitative calculation, hypothetical reasoning,
-          or conceptual understanding. As illustrated in Fig. 1, SciVideoBench demands that models possess
-          profound domain knowledge, execute sophisticated logical reasoning, and demonstrate accurate
-          spatio-temporal grounding. <br><br>
-
-          We developed SCIVIDEOBENCH using a multi-stage, agent-human collaborative pipeline. This
-process involved mining associated experimental manuscripts, leveraging LMMs for initial ques-
-tion generation, and engaging domain experts to validate the question-answer pairs and filter out
-unanswerable or video-irrelevant questions. <br><br>
-
-
-Our evaluation of both proprietary and open-source LMMs on SCIVIDEOBENCH reveals consistently
-low accuracy, underscoring the significant challenge this new benchmark presents and, consequently,
-the substantial opportunity for advancing video reasoning capabilities. In-depth analysis of the results
-reveals that factors such as model architecture, reasoning capacity, and perceptual grounding play a
-critical role in shaping video reasoning performance. These insights not only offer clear guidance
-for future research efforts aimed at developing more sophisticated LMMs but also emphasize the
-broader potential of SCIVIDEOBENCH. Beyond serving as an essential benchmark for assessing
-current video reasoning abilities, SCIVIDEOBENCH acts as a catalyst, driving focused innovation
-toward the creation of highly capable multimodal AI co-scientists to accelerate the pace of future
-scientific discovery. <br>
-
-
-        
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-</div>
-</section>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    updateRowNumbers();
-    document.querySelector("#results").addEventListener("click", updateRowNumbers);
-  });
-
-  function updateRowNumbers() {
-    const rows = document.querySelectorAll("#results tbody tr");
-    rows.forEach((row, index) => {
-      row.querySelector("td").innerText = index + 1;
-    });
-  }
-</script>
-
-<section class="section">
-  <div class="container">
-    
-    <div class="columns is-centered">
-      <div class="column is-full has-text-centered content">
-
-        <h2 class="title is-3" id="leaderboard">Leaderboard</h2>
-        <div class="content">
-
-
-         <!-- <img src="./static/images/result.png" alt="SciVideoBench Overview" style="width: 100%;">  -->
-          <p class="mt-3">Accuracy scores on SciVideoBench. 
-          </p> 
-          <!-- <div class="video-duration">
-            <p>
-              <strong>Short Video:</strong> &lt; 2min  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-              <strong>Medium Video:</strong> 4min ~ 15min  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-              <strong>Long Video:</strong> 30min ~ 60min
-            </p>
-            <p>
-              By default, this leaderboard is sorted by results with subtitles. To view other sorted results, please click on the corresponding cell.
-            </p>
-          </div> -->
-
-
-          <!-- <table border="1" class="dataframe">
-            <thead>
-            <tr>
-            <th>Models</th><th>LLM</th><th>Size</th><th>Overall</th>
-            <th>Physics</th><th>Chemistry</th><th>Biology</th><th>Medicine</th>
-            <th>Quantitative</th><th>Hypothetical</th><th>Conceptual</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Random Guess</i></td></tr>
-            <tr><td></td><td>-</td><td>-</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td><td>10.00</td></tr>
-            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Blind Baseline</i></td></tr>
-            <tr><td>Qwen2.5</td><td>-</td><td>3B</td><td>14.64</td><td>15.11</td><td>16.94</td><td>11.47</td><td>12.24</td><td>12.38</td><td>15.52</td><td>15.44</td></tr>
-            <tr><td>Qwen2.5</td><td>-</td><td>7B</td><td>15.61</td><td>17.19</td><td>15.74</td><td>12.38</td><td>13.72</td><td>12.25</td><td>17.26</td><td>16.28</td></tr>
-            <tr><td>Qwen2.5</td><td>-</td><td>32B</td><td>17.59</td><td>22.49</td><td>19.37</td><td>16.82</td><td>15.76</td><td>13.14</td><td>18.92</td><td>19.11</td></tr>
-            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Proprietary Models</i></td></tr>
-            <tr><td>Gemini-2.5-Pro</td><td>-</td><td>-</td><td><p><b>55.07</b></td><td>58.37</td><td>47.22</td><td>59.09</td><td>41.94</td><td>34.74</td><td>54.86</td><td>62.57</td></tr>
-            <tr><td>o4-mini</td><td>-</td><td>-</td><td>51.31</td><td>42.44</td><td>52.63</td><td>52.60</td><td>53.58</td><td>33.95</td><td>56.62</td><td>55.77</td></tr>
-            <tr><td>Gemini-1.5-Pro</td><td>-</td><td>-</td><td>48.19</td><td>37.21</td><td>53.14</td><td>48.48</td><td>47.85</td><td>28.99</td><td>56.78</td><td>52.24</td></tr>
-            <tr><td>GPT-4o</td><td>-</td><td>-</td><td>44.54</td><td>45.62</td><td>39.85</td><td>44.30</td><td>47.94</td><td>27.74</td><td>49.84</td><td>46.78</td></tr>
-            <tr><td>Gemini-1.5-Flash</td><td>-</td><td>-</td><td>40.00</td><td>37.21</td><td>43.43</td><td>39.60</td><td>39.23</td><td>26.57</td><td>45.73</td><td>42.93</td></tr>
-            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Proprietary Models with Chain-of-Thought Reasoning</i></td></tr>
-            <tr><td>Gemini-1.5-Pro (CoT)</td><td>-</td><td>-</td><td>53.68</td><td>44.19</td><td>53.71</td><td>54.95</td><td>54.55</td><td>41.55</td><td>63.32</td><td>54.74</td></tr>
-            <tr><td>GPT-4o (CoT)</td><td>-</td><td>-</td><td>51.50</td><td>47.67</td><td>55.43</td><td>50.10</td><td>53.11</td><td>33.82</td><td>58.79</td><td>55.46</td></tr>
-            <tr><td>Gemini-1.5-Flash (CoT)</td><td>-</td><td>-</td><td>48.39</td><td>40.70</td><td>52.00</td><td>49.49</td><td>45.39</td><td>35.75</td><td>58.79</td><td>49.37</td></tr>
-            <tr style="background-color:#e0e0e0;"><td colspan="11"><i>Open-Source Models</i></td></tr>
-            <tr><td>InternVL2.5-8B</td><td>InternLM2.5</td><td>7B</td><td>35.14</td><td>37.94</td><td>34.47</td><td>38.45</td><td>31.70</td><td>18.75</td><td>45.71</td><td>38.12</td></tr>
-            <tr><td>LLaVA-NeXt-Video-DPO</td><td>Qwen2</td><td>7B</td><td>33.10</td><td>34.42</td><td>29.10</td><td>37.78</td><td>32.11</td><td>19.64</td><td>43.22</td><td>35.11</td></tr>
-            <tr><td>Qwen2.5-VL-7B</td><td>Qwen2.5</td><td>7B</td><td>31.91</td><td>32.37</td><td>30.49</td><td>33.77</td><td>28.10</td><td>13.38</td><td>41.54</td><td>35.97</td></tr>
-            <tr><td>XComposer2</td><td>InternLM2</td><td>7B</td><td>28.40</td><td>26.81</td><td>26.77</td><td>32.38</td><td>21.95</td><td>17.82</td><td>36.11</td><td>30.11</td></tr>
-            <tr><td>mPLUG-Owl3</td><td>Qwen2</td><td>7B</td><td>27.10</td><td>29.69</td><td>28.62</td><td>24.68</td><td>30.28</td><td>22.35</td><td>34.16</td><td>26.84</td></tr>
-            <tr><td>InternVL2-8B</td><td>InternLM2.5</td><td>7B</td><td>26.16</td><td>31.09</td><td>26.48</td><td>33.41</td><td>22.18</td><td>17.72</td><td>34.59</td><td>26.77</td></tr>
-            <tr><td>Qwen-VL</td><td>Qwen</td><td>7B</td><td>25.78</td><td>26.11</td><td>27.23</td><td>21.92</td><td>20.75</td><td>16.88</td><td>29.01</td><td>28.44</td></tr>
-            <tr><td>VideoChat2-Mistral-7B</td><td>Mistral</td><td>7B</td><td>25.69</td><td>28.03</td><td>24.11</td><td>27.85</td><td>19.91</td><td>12.37</td><td>37.94</td><td>26.75</td></tr>
-            <tr><td>LongVA-7B-DPO</td><td>Qwen2</td><td>7B</td><td>24.60</td><td>26.82</td><td>24.51</td><td>23.78</td><td>20.30</td><td>13.24</td><td>29.81</td><td>27.44</td></tr>
-            <tr><td>Video-LLaVA-7B</td><td>Vicuna</td><td>7B</td><td>23.73</td><td>27.11</td><td>23.23</td><td>24.54</td><td>22.01</td><td>21.02</td><td>25.87</td><td>24.41</td></tr>
-            <tr><td>LLaVA-NeXT-Video</td><td>Qwen2</td><td>7B</td><td>23.44</td><td>26.75</td><td>21.96</td><td>28.60</td><td>25.43</td><td>15.33</td><td>26.61</td><td>25.78</td></tr>
-            <tr><td>InstructBLIP-7B</td><td>Vicuna</td><td>7B</td><td>21.14</td><td>20.58</td><td>23.01</td><td>22.55</td><td>18.28</td><td>12.93</td><td>28.44</td><td>21.98</td></tr>
-            <tr><td>Video-ChatGPT</td><td>Vicuna</td><td>7B</td><td>21.12</td><td>23.86</td><td>21.79</td><td>17.68</td><td>19.35</td><td>14.90</td><td>27.82</td><td>21.42</td></tr>
-            <tr><td>LongVA-7B</td><td>Qwen2</td><td>7B</td><td>20.37</td><td>24.41</td><td>22.98</td><td>19.99</td><td>17.52</td><td>12.20</td><td>25.77</td><td>21.86</td></tr>
-            <tr><td>Xcomposer</td><td>InternLM</td><td>7B</td><td>16.79</td><td>17.36</td><td>18.47</td><td>16.80</td><td>14.27</td><td>11.19</td><td>21.94</td><td>18.35</td></tr>
-            </tbody></table> -->
-
-            <table border="1" class="dataframe">
-              <thead>
-                <tr>
-                  <th>Models</th><th>LLM</th><th>Size</th><th>Overall</th>
-                  <th>Quantitative</th><th>Hypothetical</th><th>Conceptual</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- <tr style="background-color:#e0e0e0;"><td colspan="7"><i>Proprietary Models</i></td></tr> -->
-                <tr><td>Gemini-2.5-Pro</td><td>-</td><td>-</td><td><b>36.86</b></td><td><b>18.37</b></td><td><b>44.54</b></td><td><b>44.74</b></td></tr>
-                <!-- <tr><td>o4-mini</td><td>-</td><td>-</td><td>51.31</td><td>33.95</td><td>56.62</td><td>55.77</td></tr> -->
-                <tr><td>GPT-4o</td><td>-</td><td>-</td><td>33.23</td><td>11.22</td><td>41.18</td><td>43.86</td></tr>
-                <tr><td>Gemini-1.5-Pro</td><td>-</td><td>-</td><td>32.63</td><td>12.24</td><td>40.34</td><td>42.11</td></tr>
-                <tr><td>Gemini-1.5-Flash</td><td>-</td><td>-</td><td>30.21</td><td>10.20</td><td>36.97</td><td>40.35</td></tr>
-                <!-- <tr style="background-color:#e0e0e0;"><td colspan="7"><i>Open-Source Models</i></td></tr> -->
-                <tr><td>Qwen2.5-VL-32B</td><td>Qwen2.5</td><td>32B</td><td>28.70</td><td>11.22</td><td>35.29</td><td>36.84</td></tr>
-                <tr><td>InternVL2.5-26B</td><td>InternLM2.5</td><td>26B</td><td>27.79</td><td>9.18</td><td>36.13</td><td>35.09</td></tr>
-                <tr><td>InternVL2.5-8B</td><td>InternLM2.5</td><td>7B</td><td>27.79</td><td>9.18</td><td>33.61</td><td>37.72</td></tr>
-                <tr><td>Qwen2.5-VL-7B</td><td>Qwen2.5</td><td>7B</td><td>26.89</td><td>9.18</td><td>34.45</td><td>34.21</td></tr>
-                <tr><td>LLaVA-NeXt-Video-DPO</td><td>Qwen2</td><td>7B</td><td>25.38</td><td>8.16</td><td>31.93</td><td>33.33</td></tr>
-                <tr><td>XComposer2</td><td>InternLM2</td><td>7B</td><td>25.08</td><td>7.14</td><td>31.09</td><td>34.21</td></tr>
-                <!-- <tr><td>mPLUG-Owl3</td><td>Qwen2</td><td>7B</td><td>27.10</td><td>22.35</td><td>34.16</td><td>26.84</td></tr> -->
-                <tr><td>InternVL2-8B</td><td>InternLM2.5</td><td>7B</td><td>22.05</td><td>7.14</td><td>28.57</td><td>28.07</td></tr>
-                <tr><td>Qwen-VL</td><td>Qwen</td><td>7B</td><td>21.75</td><td>7.14</td><td>30.25</td><td>25.44</td></tr>
-                <!-- <tr><td>VideoChat2-Mistral-7B</td><td>Mistral</td><td>7B</td><td>25.69</td><td>12.37</td><td>37.94</td><td>26.75</td></tr> -->
-                <!-- <tr><td>LongVA-7B-DPO</td><td>Qwen2</td><td>7B</td><td>24.60</td><td>13.24</td><td>29.81</td><td>27.44</td></tr> -->
-                <tr><td>Video-LLaVA-7B</td><td>Vicuna</td><td>7B</td><td>21.15</td><td>6.12</td><td>28.57</td><td>26.32</td></tr>
-                <!-- <tr><td>LLaVA-NeXT-Video</td><td>Qwen2</td><td>7B</td><td>23.44</td><td>15.33</td><td>26.61</td><td>25.78</td></tr> -->
-                <!-- <tr><td>InstructBLIP-7B</td><td>Vicuna</td><td>7B</td><td>21.14</td><td>12.93</td><td>28.44</td><td>21.98</td></tr> -->
-                <tr><td>Video-ChatGPT</td><td>Vicuna</td><td>7B</td><td>19.34</td><td>5.10</td><td>26.05</td><td>24.56</td></tr>
-                <tr><td>LongVA-7B</td><td>Qwen2</td><td>7B</td><td>18.73</td><td>6.12</td><td>24.37</td><td>23.68</td></tr>
-                <!-- <tr><td>Xcomposer</td><td>InternLM</td><td>7B</td><td>16.79</td><td>11.19</td><td>21.94</td><td>18.35</td></tr> -->
-              </tbody>
-            </table>
-            
-
-        <!-- <p style="margin-top: -20px;">
-          <strong style="color: #22a56e; font-size: 18px;" >Green date</strong> indicates the newly added/updated models  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-          - indicates closed-source models
-        </p>
-
-        <p style=" text-align: left;">
-          1* The short and medium videos are sampled at 1 fps, while the long videos are sampled at 0.5 fps to ensure the stability of the API.
-          </br>2* The videos less than 384 seconds are sampled at 1 fps, and for those longer than 384 seconds, we extract 384 frames uniformly. All the frames are resized to 512x512 resolution to fit within GPT-4o’s max context length.
-          </br>3* The videos are sampled at 2 fps, and the upper limit is 768 frames.
-          </br>4* The videos are sampled at 1 fps, and the upper limit is 600 frames.
-          </br>5* The videos are sampled at 2 fps, and the upper limit is 480 frames.
-        </p> -->
-
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- DATASET SECTION -->
-<section class="hero is-light is-small">
-  <div class="hero-body has-text-centered">
-  <h1 class="title is-1 mathvista_other">
-    <span class="mathvista_other" style="vertical-align: middle">Benchmark</span>
-  </h1>
-  </div>
-</section>
-            
-<section class="section">
-  <div class="container">
-    <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths" style="width: 100%;">
-        <!-- <h2 class="title is-3">Data Examples</h2> -->
-        <div class="content has-text-justified">
-          <!-- <p style="text-align: center;", class="mt-3"><strong>All data are newly collected and annotated by humans, not from any existing video dataset.</strong> -->
-          <!-- </p> -->
-
-        <div id="results-carousel" class="carousel results-carousel">  
-          
-            <div class="content has-text-centered">
-
-              <img src="static/images/teaser.png" style="width: 95%;"/>
-              <p style="margin-bottom: 30px;">🔗 Full Video Link:&nbsp;&nbsp;<a href="https://app.jove.com/v/65956/author-spotlight-advancing-therapeutics-with-biocompatible-sodium">https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium</a></p>
-            
-            <!-- </div> -->
-          
-            <!-- <div class="content has-text-centered">
-
-              <img src="static/images/teaser.png" style="width: 95%;"/>
-              <p style="margin-bottom: 30px;">🔗 Full Video Link:&nbsp;&nbsp;<a href="https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium">https://app.jove.com/v/66871/author-spotlight-advancing-therapeutics-with-biocompatible-sodium</a></p>
-            
-           </div> -->
-
-        </div>    
-        </div>
-        </div> 
-        </div>
-      </div>
-    </div>
-
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="content has-text-centered">
-          <h2 class="title is-3" style="margin-top: 30px;">Data Examples</h2>
-         
-          
-          <img src="static/images/teaser.png" alt="data-composition" style="max-width: 70%;"/>
-          <!-- bing tu -->
-          <!-- <div class="container-wrapper">
-            <div id="container"></div>
-            <div id="image-container">
-              <img src="static/images/stats.png" alt="data-composition" style="max-width: 60%; display: inline-block; margin-right: 200px;"/>
+            <div class="cta-buttons">
+                <a href="#leaderboard" class="cta-button primary-cta">View Leaderboard</a>
+                <a href="#" class="cta-button secondary-cta">Download Dataset</a>
             </div>
-          </div>
-        <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.0/files/dist/echarts.min.js"></script>
-        <script type="text/javascript" src="static/js/bingtu.js"></script> -->
-
-        <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;"> 
-            (Left) <strong>Video Categorie Hierarchy</strong>: Video-MME consists of 6 key domains and 30 subcategories of video types. <br> (Right) <strong>Video Duration and Task Type Distributions</strong>: Video-MME spans a full spectrum of video lengths and assesses various core abilities of MLLMs.<br/>
-        </p> -->
-
         </div>
-      </div>
-    </div>
-    
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="content has-text-centered">
-          <h2 class="title is-3" style="margin-top: 30px;">Benchmark Statistics</h2>
-         
-          
-          <img src="static/images/stats.png" alt="data-composition" style="max-width: 70%;"/>
-          <!-- bing tu -->
-          <!-- <div class="container-wrapper">
-            <div id="container"></div>
-            <div id="image-container">
-              <img src="static/images/stats.png" alt="data-composition" style="max-width: 60%; display: inline-block; margin-right: 200px;"/>
+    </section>
+
+    <!-- Dataset Showcase Section -->
+    <section class="showcase-section">
+        <div class="container">
+            <h2 class="section-title">🎬 Dataset Examples</h2>
+            <div class="gif-grid">
+                <!-- Row 1 -->
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/4a00ff/00ffcc?text=Physics+1" alt="Physics Example 1" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Pendulum Motion</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/00ffcc/4a00ff?text=Chemistry+1" alt="Chemistry Example 1" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Chemical Reaction</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ff00ff/00ffcc?text=Biology+1" alt="Biology Example 1" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Cell Division</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ffcc00/4a00ff?text=Medicine+1" alt="Medicine Example 1" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">MRI Scan</span>
+                    </div>
+                </div>
+                
+                <!-- Row 2 -->
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/4a00ff/ffcc00?text=Physics+2" alt="Physics Example 2" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Wave Interference</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/00ffcc/ff00ff?text=Chemistry+2" alt="Chemistry Example 2" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Crystallization</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ff00ff/ffcc00?text=Biology+2" alt="Biology Example 2" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Protein Folding</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ffcc00/00ffcc?text=Medicine+2" alt="Medicine Example 2" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Blood Flow</span>
+                    </div>
+                </div>
+                
+                <!-- Row 3 -->
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/4a00ff/ff00ff?text=Physics+3" alt="Physics Example 3" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Fluid Dynamics</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/00ffcc/ffcc00?text=Chemistry+3" alt="Chemistry Example 3" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Titration</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ff00ff/4a00ff?text=Biology+3" alt="Biology Example 3" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">DNA Replication</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ffcc00/ff00ff?text=Medicine+3" alt="Medicine Example 3" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Neuron Activity</span>
+                    </div>
+                </div>
+                
+                <!-- Row 4 -->
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/4a00ff/00ffcc?text=Physics+4" alt="Physics Example 4" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Electromagnetic Field</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/00ffcc/4a00ff?text=Chemistry+4" alt="Chemistry Example 4" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Combustion</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ff00ff/00ffcc?text=Biology+4" alt="Biology Example 4" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Photosynthesis</span>
+                    </div>
+                </div>
+                <div class="gif-item">
+                    <img src="https://via.placeholder.com/250x250/ffcc00/4a00ff?text=Medicine+4" alt="Medicine Example 4" />
+                    <div class="gif-overlay">
+                        <span class="gif-label">Heartbeat Cycle</span>
+                    </div>
+                </div>
             </div>
-          </div>
-        <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.0/files/dist/echarts.min.js"></script>
-        <script type="text/javascript" src="static/js/bingtu.js"></script> -->
-
-        <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;"> 
-            (Left) <strong>Video Categorie Hierarchy</strong>: Video-MME consists of 6 key domains and 30 subcategories of video types. <br> (Right) <strong>Video Duration and Task Type Distributions</strong>: Video-MME spans a full spectrum of video lengths and assesses various core abilities of MLLMs.<br/>
-        </p> -->
-
         </div>
-      </div>
-    </div>
+    </section>
 
-    <div class="columns is-centered">
-      <div class="column">
-        <div class="content has-text-centered">
-          <h2 class="title is-3">Benchmark Comparison</h2>
-          <!-- <img src="static/images/dataset_cl.jpg" alt="data-composition" style="max-width: 30%;"/> -->
-          <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;" >
-            Analysis of Certificate Length in seconds. Avg. V.L.: average video length, Med. C.L.: median certificate length, Avg. C.L.: average certificate length.
-          </p> -->
-
-          <img src="static/images/compare.png" alt="data-composition" style="max-width: 70%;"/>
-          <!-- <p style="text-align: center; margin-left: auto; margin-right: auto; width: 50%;" >
-            The comparison of various benchmarks encompasses several key aspects: 
-                the total number of videos, the number of clips, the average duration of the videos, the method of video annotation (manual denoted as M, automated as A), 
-                the average number of QA pair tokens, the average number of subtitle tokens, whether the videos cover multiple duration levels, 
-                whether the videos are sourced from a broad range of open domains, and whether provide subtitle together with audio information. 
-                It is important to note that if a dataset includes multiple task formats, our comparison focuses solely on the multiple-choice segment.
-          </p> -->
+    <!-- Abstract and Teaser Section -->
+    <section class="abstract-section">
+        <div class="container">
+            <h2 class="section-title">📝 Abstract</h2>
+            <div class="abstract-content">
+                <div class="abstract-box">
+                    <p>
+                        Large Multimodal Models (LMMs) have achieved remarkable progress across various capabilities; however, complex video reasoning in the scientific domain remains a significant and challenging frontier. Current video benchmarks predominantly target general scenarios where perception/recognition is heavily relied on, while with relatively simple reasoning tasks, leading to saturation and thus failing to effectively evaluate advanced multimodal cognitive skills.
+                    </p>
+                    <p>
+                        To address this critical gap, we introduce <strong>SCIVIDEOBENCH</strong>, a rigorous benchmark specifically designed to assess advanced video reasoning in scientific contexts. SCIVIDEOBENCH consists of 1,000 carefully crafted multiple-choice questions derived from cutting-edge scientific experimental videos spanning over 25 specialized academic subjects and verified by a semi-automatic system. Each question demands sophisticated domain-specific knowledge, precise spatiotemporal perception, and intricate logical reasoning, effectively challenging models' higher-order cognitive abilities.
+                    </p>
+                    <p>
+                        Our evaluation highlights significant performance deficits in state-of-the-art proprietary and open-source LMMs, including Gemini 2.5 Pro and Qwen2.5-VL, indicating substantial room for advancement in video reasoning capabilities. Detailed analyses of critical factors such as reasoning complexity and visual grounding provide valuable insights and clear direction for future developments in LMMs, driving the evolution of truly capable multimodal AI co-scientists.
+                    </p>
+                    <p>
+                        We hope SCIVIDEOBENCH could fit the interests of the community and help to push the boundary of cutting-edge AI for border science.
+                    </p>
+                </div>
+                
+                <div class="teaser-figure">
+                    <img src="https://via.placeholder.com/1200x600/1a1a2e/00ffcc?text=Teaser+Figure+Placeholder" alt="SciVideoBench Teaser Figure" />
+                    <div class="figure-caption">
+                        <strong>Figure 1:</strong> Overview of SciVideoBench - A comprehensive benchmark for evaluating scientific video reasoning in Large Multimodal Models.
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    
-  </div>
-</section>
+    </section>
 
-<!-- RESULTS SECTION
-<section class="hero is-light is-small">
-  <div class="hero-body has-text-centered">
-    <h1 class="title is-1 mathvista_other">Experiment Results</h1>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-
-    <div class="columns is-centered m-6">
-      <div class="column is-full has-text-centered content">
-        <h2 class="title is-3">Different Question Types</h2>
-          <div class="box m-5">
-            <div class="content has-text-centered">
-              <img src="static/images/exp_results/results_of_question_types_0616.png" alt="grade-lv" width="50%"/>
-              <p>Evaluation results of four representative MLLMs.</p>
+    <!-- Overview Section -->
+    <section class="overview-section">
+        <div class="container">
+            <h2 class="section-title">🔍 Overview</h2>
+            <div class="overview-content">
+                <div class="overview-box">
+                    <p>
+                        To construct a high-quality benchmark for advanced scientific reasoning, we collect 241 research-grade experimental videos from the <em>Journal of Visualized Experiments</em> (JoVE)<sup><a href="https://www.jove.com" target="_blank">↗</a></sup>, a peer-reviewed platform publishing methodological videos across diverse scientific disciplines. These professionally produced and narratively structured videos clearly demonstrate laboratory protocols, scientific phenomena, and technical instrumentation, making them an ideal foundation for a benchmark grounded in authentic scientific practice.
+                    </p>
+                    <p>
+                        Each video is accompanied by a peer-reviewed manuscript and synchronized audio narration: the manuscript details experimental protocols and results, while the narration provides temporally aligned explanations of each step as it unfolds. This tri-modal alignment—<strong>video</strong>, <strong>audio</strong>, and <strong>text</strong>—supports principled question generation and rigorous answer verification, ensuring that questions are both visually grounded and scientifically meaningful.
+                    </p>
+                    <p>
+                        We focus on four foundational domains—<strong>physics</strong>, <strong>chemistry</strong>, <strong>biology</strong>, and <strong>medicine</strong>—covering a wide spectrum of procedural complexity and reasoning challenges. Videos are selected to include measurable variables (e.g., reaction time, temperature, applied force), observable causal relationships, and logical experimental sequences, thereby enabling <em>conceptual</em>, <em>hypothetical</em>, and <em>quantitative</em> reasoning.
+                    </p>
+                    <p>
+                        This targeted curation ensures that each video in SCIVIDEOBENCH provides rich multimodal cues essential for rigorous scientific reasoning and serves as an ideal testbed for evaluating LMMs.
+                    </p>
+                </div>
+                
+                <div class="overview-figure">
+                    <img src="https://via.placeholder.com/1400x700/1a1a2e/00ffcc?text=Overview+Figure+Placeholder" alt="SciVideoBench Overview Diagram" />
+                    <div class="figure-caption">
+                        <strong>Figure 2:</strong> Data collection and annotation pipeline for SciVideoBench, showing the tri-modal alignment of video, audio, and text sources.
+                    </div>
+                </div>
             </div>
-          </div>
-      </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics-section">
+        <div class="container">
+            <h2 class="section-title">📊 Statistics</h2>
+            <div class="statistics-content">
+                <div class="statistics-box">
+                    <p>
+                        We collected a total of 241 experimental videos spanning four major domains and covering more than 25 distinct scientific subjects, as illustrated in Figure 3. The average video duration is 484 seconds, which ensures that the benchmark reflects the complexity and extended reasoning often required in real-world scientific experiments.
+                    </p>
+                    <p>
+                        Building upon these videos, we annotated a total of 1,000 challenging questions that demand research-level knowledge for both perception and reasoning. To further capture the nature of academic research and experimental analysis, we carefully designed three distinct question types (<strong><em>conceptual</em></strong>, <strong><em>hypothetical</em></strong>, and <strong><em>quantitative</em></strong>) that reflect common reasoning scenarios observed across the videos.
+                    </p>
+                </div>
+                
+                <div class="statistics-figure">
+                    <img src="https://via.placeholder.com/1400x800/1a1a2e/00ffcc?text=Statistics+Figure+Placeholder" alt="SciVideoBench Dataset Statistics" />
+                    <div class="figure-caption">
+                        <strong>Figure 3:</strong> Distribution of videos across domains and scientific subjects in SciVideoBench, showing the diversity and scale of our benchmark.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Leaderboard Section -->
+        <section id="leaderboard" class="leaderboard-section">
+            <h2 class="section-title">🏆 Leaderboard</h2>
+            <div class="leaderboard">
+                <table class="leaderboard-table" id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Rank</th>
+                            <th rowspan="2">Model</th>
+                            <th rowspan="2">LLM</th>
+                            <th rowspan="2">Size</th>
+                            <th rowspan="2" class="sortable" data-sort="overall">Overall <span class="sort-arrow">↓</span></th>
+                            <th colspan="4" class="category-header">Disciplines</th>
+                            <th colspan="3" class="category-header">Reasoning Types</th>
+                        </tr>
+                        <tr>
+                            <th class="sortable sub-header" data-sort="physics">Physics <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="chemistry">Chemistry <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="biology">Biology <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="medicine">Medicine <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="conceptual">Conceptual <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="hypothetical">Hypothetical <span class="sort-arrow"></span></th>
+                            <th class="sortable sub-header" data-sort="quantitative">Quantitative <span class="sort-arrow"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Baselines -->
+                        <tr class="baseline-row">
+                            <td class="rank">-</td>
+                            <td class="model-name">Random Guess</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="score">10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                            <td>10.0%</td>
+                        </tr>
+                        <tr class="baseline-row human-row">
+                            <td class="rank">-</td>
+                            <td class="model-name">Human (Graduate Students)</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="score">17.4%</td>
+                            <td>18.1%</td>
+                            <td>18.7%</td>
+                            <td>15.9%</td>
+                            <td>21.2%</td>
+                            <td>16.1%</td>
+                            <td>21.2%</td>
+                            <td>18.9%</td>
+                        </tr>
+                        <!-- Models will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section class="analysis">
+            <h2 class="section-title">📊 Analysis</h2>
+            <div class="analysis-grid">
+                <div class="analysis-item">
+                    <div class="analysis-figure">
+                        <img src="https://via.placeholder.com/650x400/1a1a2e/00ffcc?text=Analysis+Figure+1" alt="Performance Analysis Chart 1" />
+                    </div>
+                    <div class="analysis-text-box">
+                        <h3 class="analysis-subtitle">Performance by Domain</h3>
+                        <p>
+                            Detailed analysis of model performance across different scientific domains reveals significant variations in reasoning capabilities. Physics and chemistry tasks show higher performance due to their more structured nature, while biology and medicine present unique challenges with complex visual patterns and domain-specific knowledge requirements.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="analysis-item">
+                    <div class="analysis-figure">
+                        <img src="https://via.placeholder.com/650x400/1a1a2e/00ffcc?text=Analysis+Figure+2" alt="Performance Analysis Chart 2" />
+                    </div>
+                    <div class="analysis-text-box">
+                        <h3 class="analysis-subtitle">Reasoning Type Analysis</h3>
+                        <p>
+                            Comparative analysis across conceptual, hypothetical, and quantitative reasoning types demonstrates that current LMMs excel at conceptual understanding but struggle with quantitative calculations and hypothetical scenario reasoning, highlighting critical areas for improvement in multimodal AI systems.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section class="examples-section">
+            <h2 class="section-title">🔬 Dataset Examples</h2>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="video-placeholder">
+                        <div class="play-button">
+                            <div class="play-icon"></div>
+                        </div>
+                    </div>
+                    <div class="example-content">
+                        <h3 class="example-title">Pendulum Oscillation Analysis</h3>
+                        <p class="example-description">
+                            Predict the period of oscillation based on visual observation of pendulum length and initial displacement.
+                        </p>
+                        <div class="tags">
+                            <span class="tag">Physics</span>
+                            <span class="tag">Temporal Reasoning</span>
+                            <span class="tag">Quantitative</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="video-placeholder">
+                        <div class="play-button">
+                            <div class="play-icon"></div>
+                        </div>
+                    </div>
+                    <div class="example-content">
+                        <h3 class="example-title">Chemical Reaction Prediction</h3>
+                        <p class="example-description">
+                            Identify reaction products and intermediates from time-lapse footage of color changes and precipitate formation.
+                        </p>
+                        <div class="tags">
+                            <span class="tag">Chemistry</span>
+                            <span class="tag">Causal Reasoning</span>
+                            <span class="tag">Visual Recognition</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="video-placeholder">
+                        <div class="play-button">
+                            <div class="play-icon"></div>
+                        </div>
+                    </div>
+                    <div class="example-content">
+                        <h3 class="example-title">Cell Division Tracking</h3>
+                        <p class="example-description">
+                            Track and count mitotic events in time-lapse microscopy, identifying different phases of cell division.
+                        </p>
+                        <div class="tags">
+                            <span class="tag">Biology</span>
+                            <span class="tag">Object Tracking</span>
+                            <span class="tag">Classification</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collaborating Institutions Section -->
+        <section class="institutions-section">
+            <h2 class="section-title">Collaborating Institutions</h2>
+            <div class="institutions-grid">
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#00ffcc" stroke-width="2"/>
+                            <text x="50" y="40" text-anchor="middle" fill="#00ffcc" font-size="18" font-weight="bold">UCF</text>
+                            <text x="50" y="60" text-anchor="middle" fill="#a0a0b8" font-size="10">University of</text>
+                            <text x="50" y="72" text-anchor="middle" fill="#a0a0b8" font-size="10">Central Florida</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" fill="none" stroke="#6600ff" stroke-width="2"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#6600ff" font-size="24" font-weight="bold">A</text>
+                            <text x="50" y="70" text-anchor="middle" fill="#a0a0b8" font-size="10">Amazon</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <path d="M 20 70 L 50 20 L 80 70 Z" fill="none" stroke="#00ffcc" stroke-width="2"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#00ffcc" font-size="16" font-weight="bold">UNC</text>
+                            <text x="50" y="85" text-anchor="middle" fill="#a0a0b8" font-size="9">Chapel Hill</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <rect x="25" y="25" width="50" height="50" rx="5" fill="none" stroke="#ff00ff" stroke-width="2"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#ff00ff" font-size="20" font-weight="bold">S</text>
+                            <text x="50" y="90" text-anchor="middle" fill="#a0a0b8" font-size="10">Stanford</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <circle cx="35" cy="50" r="20" fill="none" stroke="#4169E1" stroke-width="2"/>
+                            <circle cx="65" cy="50" r="20" fill="none" stroke="#4169E1" stroke-width="2"/>
+                            <text x="50" y="90" text-anchor="middle" fill="#a0a0b8" font-size="9">Zhejiang University</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <text x="50" y="50" text-anchor="middle" fill="#6600ff" font-size="28" font-weight="bold">W</text>
+                            <text x="50" y="70" text-anchor="middle" fill="#a0a0b8" font-size="8">University of</text>
+                            <text x="50" y="80" text-anchor="middle" fill="#a0a0b8" font-size="8">Washington</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <rect x="30" y="30" width="40" height="40" fill="none" stroke="#FF6600" stroke-width="3"/>
+                            <line x1="40" y1="40" x2="40" y2="60" stroke="#FF6600" stroke-width="3"/>
+                            <text x="50" y="85" text-anchor="middle" fill="#a0a0b8" font-size="10">UIUC</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="institution-card">
+                    <div class="institution-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100">
+                            <rect x="25" y="35" width="50" height="30" fill="none" stroke="#ffffff" stroke-width="2"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="bold">λ</text>
+                            <text x="50" y="80" text-anchor="middle" fill="#a0a0b8" font-size="10">Lambda</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <div class="columns is-centered m-6">
-      <div class="column is-full has-text-centered content">
-        <h2 class="title is-3">Different Video Duration Types</h2>
+    <script>
+        // Add floating particles
+        const particlesContainer = document.querySelector('.floating-particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.width = Math.random() * 10 + 5 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 20 + 20) + 's';
+            particlesContainer.appendChild(particle);
+        }
 
-          <div class="box m-5">
-            <div class="content has-text-centered">
-              <img src="static/images/exp_results/results_of_video_types.png" alt="" width="80%"/>
-              <p>Evaluation results of Gemini 1.5 Pro.</p>
-            </div>
-          </div>
+        // Leaderboard data
+        const modelData = [
+            // Proprietary Models
+            {model: "Gemini-2.0-Pro", llm: "-", size: "-", overall: 64.3, physics: 69.73, chemistry: 67.79, biology: 64.79, medicine: 74.77, conceptual: 61.82, hypothetical: 74.77, quantitative: 61.44},
+            {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 46.4, physics: 50.81, chemistry: 44.16, biology: 44.01, medicine: 55.14, conceptual: 49.70, hypothetical: 55.14, quantitative: 44.83},
+            // Open Source 78B+
+            {model: "InternVL-3-78B-Instruct", llm: "Qwen2.5", size: "72B", overall: 38.8, physics: 57.30, chemistry: 39.74, biology: 37.90, medicine: 46.73, conceptual: 39.39, hypothetical: 46.73, quantitative: 36.99},
+            {model: "InternVL-3-78B", llm: "Qwen2.5", size: "72B", overall: 38.5, physics: 56.76, chemistry: 39.22, biology: 37.65, medicine: 46.73, conceptual: 37.58, hypothetical: 46.73, quantitative: 37.30},
+            // Open Source 26B-40B
+            {model: "InternVL-3-38B", llm: "Qwen2.5", size: "32B", overall: 38.3, physics: 53.78, chemistry: 38.44, biology: 36.67, medicine: 42.06, conceptual: 40.00, hypothetical: 42.06, quantitative: 38.24},
+            {model: "InternVL-3-38B-Instruct", llm: "Qwen2.5", size: "32B", overall: 37.3, physics: 52.43, chemistry: 37.14, biology: 35.94, medicine: 40.19, conceptual: 39.39, hypothetical: 40.19, quantitative: 36.99},
+            // Open Source 7B-14B
+            {model: "InternVL-3-14B", llm: "Qwen2.5", size: "14B", overall: 35.7, physics: 53.51, chemistry: 35.32, biology: 35.94, medicine: 38.32, conceptual: 33.94, hypothetical: 38.32, quantitative: 35.42},
+            {model: "InternVL-3-14B-Instruct", llm: "Qwen2.5", size: "14B", overall: 35.7, physics: 53.24, chemistry: 36.36, biology: 35.70, medicine: 38.32, conceptual: 34.55, hypothetical: 38.32, quantitative: 35.42},
+            {model: "InternVL-3-8B", llm: "Qwen2.5", size: "7B", overall: 30.5, physics: 44.59, chemistry: 30.39, biology: 29.10, medicine: 35.51, conceptual: 31.52, hypothetical: 35.51, quantitative: 30.09},
+            {model: "InternVL-3-8B-Instruct", llm: "Qwen2.5", size: "7B", overall: 29.4, physics: 43.78, chemistry: 29.35, biology: 26.16, medicine: 34.58, conceptual: 31.52, hypothetical: 34.58, quantitative: 30.72},
+            {model: "InternVL-3-9B-Instruct", llm: "InternLM3", size: "8B", overall: 29.2, physics: 40.27, chemistry: 30.91, biology: 29.10, medicine: 33.64, conceptual: 29.70, hypothetical: 33.64, quantitative: 27.69},
+            // Proprietary continued
+            {model: "Gemini-1.5-Pro", llm: "-", size: "-", overall: 27.5, physics: 27.84, chemistry: 28.31, biology: 27.38, medicine: 27.10, conceptual: 26.06, hypothetical: 27.10, quantitative: 28.53},
+            {model: "InternVL-3-9B", llm: "InternLM3", size: "8B", overall: 27.2, physics: 38.65, chemistry: 27.79, biology: 25.67, medicine: 31.78, conceptual: 26.06, hypothetical: 31.78, quantitative: 28.21},
+            {model: "InternVL2-Llama3-76B", llm: "Hermes2", size: "70B", overall: 26.3, physics: 28.38, chemistry: 27.01, biology: 24.94, medicine: 29.91, conceptual: 29.70, hypothetical: 29.91, quantitative: 25.08},
+            {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 25.7, physics: 28.38, chemistry: 24.94, biology: 24.69, medicine: 22.43, conceptual: 26.06, hypothetical: 22.43, quantitative: 27.90},
+            {model: "InternVideo2.5-Chat-8B", llm: "Qwen2.5", size: "7B", overall: 25.3, physics: 37.84, chemistry: 23.12, biology: 20.29, medicine: 31.78, conceptual: 23.64, hypothetical: 31.78, quantitative: 30.41},
+            {model: "GPT-4o", llm: "-", size: "-", overall: 24.9, physics: 30.27, chemistry: 28.05, biology: 21.52, medicine: 31.78, conceptual: 29.70, hypothetical: 31.78, quantitative: 24.45},
+            // Open Source smaller models
+            {model: "InternVL-3-2B-Instruct", llm: "Qwen2.5", size: "1.5B", overall: 24.0, physics: 31.08, chemistry: 23.90, biology: 24.21, medicine: 23.36, conceptual: 21.82, hypothetical: 23.36, quantitative: 25.08},
+            {model: "InternVL2-40B", llm: "Hermes2", size: "34B", overall: 23.8, physics: 28.38, chemistry: 23.64, biology: 22.74, medicine: 30.84, conceptual: 21.82, hypothetical: 30.84, quantitative: 23.82},
+            {model: "InternVL-3-2B", llm: "Qwen2.5", size: "1.5B", overall: 22.9, physics: 31.08, chemistry: 22.60, biology: 21.52, medicine: 24.30, conceptual: 21.21, hypothetical: 24.30, quantitative: 25.08},
+            {model: "Qwen2.5-VL-32B-Instruct", llm: "Qwen2.5", size: "32B", overall: 21.5, physics: 24.86, chemistry: 24.68, biology: 22.49, medicine: 20.56, conceptual: 16.36, hypothetical: 20.56, quantitative: 23.20},
+            {model: "InternVL2-4B", llm: "Phi-3-mini", size: "4B", overall: 21.3, physics: 26.22, chemistry: 24.16, biology: 18.09, medicine: 30.84, conceptual: 24.85, hypothetical: 30.84, quantitative: 20.38},
+            {model: "LLaVA-NeXT-Video-32B", llm: "Qwen2", size: "32B", overall: 21.1, physics: 26.22, chemistry: 22.86, biology: 19.80, medicine: 23.36, conceptual: 22.42, hypothetical: 23.36, quantitative: 21.32},
+            {model: "Qwen2.5-VL-72B-Instruct", llm: "Qwen2.5", size: "72B", overall: 20.3, physics: 21.62, chemistry: 20.78, biology: 21.27, medicine: 24.30, conceptual: 16.97, hypothetical: 24.30, quantitative: 19.44},
+            {model: "InternVL2-26B", llm: "InternLM2", size: "20B", overall: 19.5, physics: 21.89, chemistry: 20.26, biology: 18.83, medicine: 22.43, conceptual: 18.18, hypothetical: 22.43, quantitative: 20.06},
+            {model: "InternVL2-8B", llm: "InternLM2", size: "7B", overall: 19.4, physics: 24.86, chemistry: 18.96, biology: 17.85, medicine: 19.63, conceptual: 21.21, hypothetical: 19.63, quantitative: 20.38},
+            {model: "InternVL-3-1B-Instruct", llm: "Qwen2.5", size: "0.5B", overall: 18.9, physics: 26.76, chemistry: 18.44, biology: 18.34, medicine: 22.43, conceptual: 18.18, hypothetical: 22.43, quantitative: 18.81},
+            {model: "LLaVA-OneVision-7B", llm: "Qwen2.5", size: "7B", overall: 18.8, physics: 23.51, chemistry: 19.22, biology: 15.56, medicine: 26.17, conceptual: 23.03, hypothetical: 26.17, quantitative: 18.18},
+            {model: "InternVL-3-1B", llm: "Qwen2.5", size: "0.5B", overall: 18.5, physics: 25.95, chemistry: 18.44, biology: 17.60, medicine: 25.23, conceptual: 16.36, hypothetical: 25.23, quantitative: 18.50},
+            {model: "Qwen2.5-VL-7B-Instruct", llm: "Qwen2.5", size: "7B", overall: 16.4, physics: 18.92, chemistry: 17.14, biology: 16.87, medicine: 16.82, conceptual: 15.15, hypothetical: 16.82, quantitative: 16.30},
+            {model: "Qwen2.5-VL-3B-Instruct", llm: "Qwen2.5", size: "3B", overall: 16.1, physics: 20.00, chemistry: 17.92, biology: 15.16, medicine: 18.69, conceptual: 13.94, hypothetical: 18.69, quantitative: 17.55},
+            {model: "InternVL2-1B", llm: "InternLM2", size: "0.5B", overall: 14.4, physics: 17.57, chemistry: 14.03, biology: 12.96, medicine: 16.82, conceptual: 13.94, hypothetical: 16.82, quantitative: 15.67},
+            {model: "LongVA", llm: "Qwen2", size: "7B", overall: 14.3, physics: 16.15, chemistry: 14.94, biology: 13.69, medicine: 15.65, conceptual: 15.00, hypothetical: 15.65, quantitative: 14.11},
+            {model: "InternVL2-2B", llm: "InternLM2", size: "2B", overall: 13.1, physics: 14.59, chemistry: 15.06, biology: 11.98, medicine: 12.15, conceptual: 12.12, hypothetical: 12.15, quantitative: 15.36},
+            {model: "LLaVA-OneVision-0.5B", llm: "Qwen2.5", size: "0.5B", overall: 12.1, physics: 15.41, chemistry: 12.99, biology: 11.74, medicine: 13.08, conceptual: 13.94, hypothetical: 13.08, quantitative: 11.29}
+        ];
 
-          <div class="box m-5">
+        let currentSort = 'overall';
+        let sortDirection = 'desc';0.5B", llm: "Qwen2.5", size: "0.5B", overall: 12.1, physics: 15.41, chemistry: 12.99, biology: 11.74, engineering: 13.08}
+        ];
+
+        let currentSort = 'overall';
+        let sortDirection = 'desc';
+
+        let currentSort = 'overall';
+        let sortDirection = 'desc';
+
+        function populateLeaderboard(sortBy = 'overall') {
+            const tbody = document.getElementById('leaderboardBody');
             
-            <div id="results-carousel" class="carousel results-carousel">  
-            
-              <div class="content has-text-centered">
-                <img src="static/images/exp_results/results_of_video_sub_types-1.jpg" alt="" width="70%"/>
-                <p style="margin-bottom: 30px;">(1) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
-              </div>
-            
-              <div class="content has-text-centered">
-                <img src="static/images/exp_results/results_of_video_sub_types-2.jpg" alt="" width="70%"/>
-                <p style="margin-bottom: 30px;">(2) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
-              </div>
+            // Sort the data
+            const sortedData = [...modelData].sort((a, b) => {
+                const aVal = a[sortBy];
+                const bVal = b[sortBy];
+                return sortDirection === 'desc' ? bVal - aVal : aVal - bVal;
+            });
 
-              <div class="content has-text-centered">
-                <img src="static/images/exp_results/results_of_video_sub_types-3.jpg" alt="" width="70%"/>
-                <p style="margin-bottom: 30px;">(3) Evaluation results of Gemini 1.5 Pro across different video subcategories.</p>
-              </div>
+            // Clear existing model rows (keep baselines)
+            const baselineRows = tbody.querySelectorAll('.baseline-row');
+            tbody.innerHTML = '';
+            baselineRows.forEach(row => tbody.appendChild(row));
 
-            </div>
+            // Add sorted models
+            sortedData.forEach((model, index) => {
+                const row = document.createElement('tr');
+                let rankClass = '';
+                if (sortBy === 'overall') {
+                    if (index === 0) rankClass = 'rank-1';
+                    else if (index === 1) rankClass = 'rank-2';
+                    else if (index === 2) rankClass = 'rank-3';
+                }
+                
+                row.innerHTML = `
+                    <td class="rank ${rankClass}">#${index + 1}</td>
+                    <td class="model-name">${model.model}</td>
+                    <td>${model.llm}</td>
+                    <td>${model.size}</td>
+                    <td class="score">${model.overall.toFixed(1)}%</td>
+                    <td>${model.physics.toFixed(1)}%</td>
+                    <td>${model.chemistry.toFixed(1)}%</td>
+                    <td>${model.biology.toFixed(1)}%</td>
+                    <td>${model.medicine.toFixed(1)}%</td>
+                    <td>${model.conceptual.toFixed(1)}%</td>
+                    <td>${model.hypothetical.toFixed(1)}%</td>
+                    <td>${model.quantitative.toFixed(1)}%</td>
+                `;
+                tbody.appendChild(row);
+            });
 
-          </div>
+            // Update sort arrows
+            document.querySelectorAll('.sort-arrow').forEach(arrow => {
+                arrow.textContent = '';
+            });
+            const currentHeader = document.querySelector(`[data-sort="${sortBy}"] .sort-arrow`);
+            if (currentHeader) {
+                currentHeader.textContent = sortDirection === 'desc' ? '↓' : '↑';
+            }
+        }
 
-      </div>
-    </div>
+        // Add click handlers for sortable columns
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortBy = this.dataset.sort;
+                    if (currentSort === sortBy) {
+                        sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        currentSort = sortBy;
+                        sortDirection = 'desc';
+                    }
+                    populateLeaderboard(sortBy);
+                });
+            });
 
-  </div>
-</section> -->
+            // Initial population
+            populateLeaderboard();
+        });
 
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
 
-<!-- </section>
-<section class="hero is-light is-small">
-  <div class="hero-body has-text-centered">
-    <h1 class="title is-1 mathvista_other" id="citation">Citation</h1>
-  </div>
-</section>
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
 
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <pre><code>
-    @article{fu2024video,
-      title={Video-MME: The First-Ever Comprehensive Evaluation Benchmark of Multi-modal LLMs in Video Analysis},
-      author={Fu, Chaoyou and Dai, Yuhan and Luo, Yondong and Li, Lei and Ren, Shuhuai and Zhang, Renrui and Wang, Zihan and Zhou, Chenyu and Shen, Yunhang and Zhang, Mengdan and others},
-      journal={arXiv preprint arXiv:2405.21075},
-      year={2024}
-    }
-</code></pre>
-  </div>
-</section> -->
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
 
+        document.querySelectorAll('.viz-card, .example-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
 
-<section class="section">
-  <div class="container" style="width: 60%;">
-  <style>
-      pre {
-        background-color: #f4f4f4;
-        padding: 5px; /* 调整padding为5px */
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        overflow-x: auto; /* 允许水平滚动 */
-    }
-    code {
-        font-family: Consolas, "Courier New", monospace;
-        color: #d63384; /* 代码文本颜色 */
-    }
-  </style>
-
-
-  </div>
-</section>
-
-
-<footer class="footer">
-  <!-- <div class="container"> -->
-    <div class="content has-text-centered">
-    </div>
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p style="text-align: center;">
-            This website is adapted from <a href="https://mathvista.github.io/">MathVista</a>, licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  <!-- </div> -->
-</footer>
-
+        // Interactive hover effects for bars
+        document.querySelectorAll('.bar').forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.filter = 'brightness(1.3)';
+            });
+            bar.addEventListener('mouseleave', function() {
+                this.style.filter = 'brightness(1)';
+            });
+        });
+    </script>
 </body>
 </html>
-
