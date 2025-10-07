@@ -664,6 +664,7 @@
         /* Leaderboard Section */
         .leaderboard-section {
             margin-bottom: 5rem;
+            padding: 0 2rem;  /* Added horizontal padding */
         }
 
         .section-title {
@@ -687,6 +688,7 @@
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1200px;  /* Ensures table doesn't get too compressed */
         }
 
         .leaderboard-table thead {
@@ -713,11 +715,12 @@
         }
 
         .category-header {
-            text-align: center;
+            text-align: center !important;
             background: rgba(102,0,255,0.1);
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 700;
         }
 
         .sub-header {
