@@ -1560,52 +1560,43 @@
         // Leaderboard data
         const modelData = [
             // Proprietary Models
-            {model: "Gemini-2.5-Pro", llm: "-", size: "-", overall: 64.3, physics: 69.73, chemistry: 67.79, biology: 64.79, medicine: 74.77, conceptual: 61.82, hypothetical: 74.77, quantitative: 61.44},
-            {model: "Gemini-2.5-Flash", llm: "-", size: "-", overall: 46.4, physics: 50.81, chemistry: 44.16, biology: 44.01, medicine: 55.14, conceptual: 49.70, hypothetical: 55.14, quantitative: 44.83},
-            {model: "Gemini-1.5-Pro", llm: "-", size: "-", overall: 27.5, physics: 27.84, chemistry: 28.31, biology: 27.38, medicine: 27.10, conceptual: 26.06, hypothetical: 27.10, quantitative: 28.53},
-            {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 25.7, physics: 28.38, chemistry: 24.94, biology: 24.69, medicine: 22.43, conceptual: 26.06, hypothetical: 22.43, quantitative: 27.90},
-            {model: "GPT-4o", llm: "-", size: "-", overall: 24.9, physics: 30.27, chemistry: 28.05, biology: 21.52, medicine: 31.78, conceptual: 29.70, hypothetical: 31.78, quantitative: 24.45},
-            // Open Source 78B+
-            {model: "InternVL-3-78B-Instruct", llm: "Qwen2.5", size: "72B", overall: 38.8, physics: 57.30, chemistry: 39.74, biology: 37.90, medicine: 46.73, conceptual: 39.39, hypothetical: 46.73, quantitative: 36.99},
-            // {model: "InternVL-3-78B", llm: "Qwen2.5", size: "72B", overall: 38.5, physics: 56.76, chemistry: 39.22, biology: 37.65, medicine: 46.73, conceptual: 37.58, hypothetical: 46.73, quantitative: 37.30},
-            // Open Source 26B-40B
-            // {model: "InternVL-3-38B", llm: "Qwen2.5", size: "32B", overall: 38.3, physics: 53.78, chemistry: 38.44, biology: 36.67, medicine: 42.06, conceptual: 40.00, hypothetical: 42.06, quantitative: 38.24},
-            {model: "InternVL-3-38B-Instruct", llm: "Qwen2.5", size: "32B", overall: 37.3, physics: 52.43, chemistry: 37.14, biology: 35.94, medicine: 40.19, conceptual: 39.39, hypothetical: 40.19, quantitative: 36.99},
-            // Open Source 7B-14B
-            // {model: "InternVL-3-14B", llm: "Qwen2.5", size: "14B", overall: 35.7, physics: 53.51, chemistry: 35.32, biology: 35.94, medicine: 38.32, conceptual: 33.94, hypothetical: 38.32, quantitative: 35.42},
-            {model: "InternVL-3-14B-Instruct", llm: "Qwen2.5", size: "14B", overall: 35.7, physics: 53.24, chemistry: 36.36, biology: 35.70, medicine: 38.32, conceptual: 34.55, hypothetical: 38.32, quantitative: 35.42},
-            // {model: "InternVL-3-8B", llm: "Qwen2.5", size: "7B", overall: 30.5, physics: 44.59, chemistry: 30.39, biology: 29.10, medicine: 35.51, conceptual: 31.52, hypothetical: 35.51, quantitative: 30.09},
-            // {model: "InternVL-3-8B-Instruct", llm: "Qwen2.5", size: "7B", overall: 29.4, physics: 43.78, chemistry: 29.35, biology: 26.16, medicine: 34.58, conceptual: 31.52, hypothetical: 34.58, quantitative: 30.72},
-            // {model: "InternVL-3-9B-Instruct", llm: "InternLM3", size: "8B", overall: 29.2, physics: 40.27, chemistry: 30.91, biology: 29.10, medicine: 33.64, conceptual: 29.70, hypothetical: 33.64, quantitative: 27.69},
-            // Proprietary continued
-            // {model: "InternVL-3-9B", llm: "InternLM3", size: "8B", overall: 27.2, physics: 38.65, chemistry: 27.79, biology: 25.67, medicine: 31.78, conceptual: 26.06, hypothetical: 31.78, quantitative: 28.21},
-            {model: "InternVL2-Llama3-76B", llm: "Hermes2", size: "70B", overall: 26.3, physics: 28.38, chemistry: 27.01, biology: 24.94, medicine: 29.91, conceptual: 29.70, hypothetical: 29.91, quantitative: 25.08},
-            {model: "InternVideo2.5-Chat-8B", llm: "Qwen2.5", size: "7B", overall: 25.3, physics: 37.84, chemistry: 23.12, biology: 20.29, medicine: 31.78, conceptual: 23.64, hypothetical: 31.78, quantitative: 30.41},
-            // Open Source smaller models
-            {model: "InternVL-3-2B-Instruct", llm: "Qwen2.5", size: "1.5B", overall: 24.0, physics: 31.08, chemistry: 23.90, biology: 24.21, medicine: 23.36, conceptual: 21.82, hypothetical: 23.36, quantitative: 25.08},
-            {model: "InternVL2-40B", llm: "Hermes2", size: "34B", overall: 23.8, physics: 28.38, chemistry: 23.64, biology: 22.74, medicine: 30.84, conceptual: 21.82, hypothetical: 30.84, quantitative: 23.82},
-            // {model: "InternVL-3-2B", llm: "Qwen2.5", size: "1.5B", overall: 22.9, physics: 31.08, chemistry: 22.60, biology: 21.52, medicine: 24.30, conceptual: 21.21, hypothetical: 24.30, quantitative: 25.08},
-            {model: "Qwen2.5-VL-32B-Instruct", llm: "Qwen2.5", size: "32B", overall: 21.5, physics: 24.86, chemistry: 24.68, biology: 22.49, medicine: 20.56, conceptual: 16.36, hypothetical: 20.56, quantitative: 23.20},
-            // {model: "InternVL2-4B", llm: "Phi-3-mini", size: "4B", overall: 21.3, physics: 26.22, chemistry: 24.16, biology: 18.09, medicine: 30.84, conceptual: 24.85, hypothetical: 30.84, quantitative: 20.38},
-            {model: "LLaVA-NeXT-Video-32B", llm: "Qwen2", size: "32B", overall: 21.1, physics: 26.22, chemistry: 22.86, biology: 19.80, medicine: 23.36, conceptual: 22.42, hypothetical: 23.36, quantitative: 21.32},
-            {model: "Qwen2.5-VL-72B-Instruct", llm: "Qwen2.5", size: "72B", overall: 20.3, physics: 21.62, chemistry: 20.78, biology: 21.27, medicine: 24.30, conceptual: 16.97, hypothetical: 24.30, quantitative: 19.44},
-            {model: "InternVL2-26B", llm: "InternLM2", size: "20B", overall: 19.5, physics: 21.89, chemistry: 20.26, biology: 18.83, medicine: 22.43, conceptual: 18.18, hypothetical: 22.43, quantitative: 20.06},
-            // {model: "InternVL2-8B", llm: "InternLM2", size: "7B", overall: 19.4, physics: 24.86, chemistry: 18.96, biology: 17.85, medicine: 19.63, conceptual: 21.21, hypothetical: 19.63, quantitative: 20.38},
-            // {model: "InternVL-3-1B-Instruct", llm: "Qwen2.5", size: "0.5B", overall: 18.9, physics: 26.76, chemistry: 18.44, biology: 18.34, medicine: 22.43, conceptual: 18.18, hypothetical: 22.43, quantitative: 18.81},
-            {model: "LLaVA-OneVision-7B", llm: "Qwen2.5", size: "7B", overall: 18.8, physics: 23.51, chemistry: 19.22, biology: 15.56, medicine: 26.17, conceptual: 23.03, hypothetical: 26.17, quantitative: 18.18},
-            // {model: "InternVL-3-1B", llm: "Qwen2.5", size: "0.5B", overall: 18.5, physics: 25.95, chemistry: 18.44, biology: 17.60, medicine: 25.23, conceptual: 16.36, hypothetical: 25.23, quantitative: 18.50},
-            {model: "Qwen2.5-VL-7B-Instruct", llm: "Qwen2.5", size: "7B", overall: 16.4, physics: 18.92, chemistry: 17.14, biology: 16.87, medicine: 16.82, conceptual: 15.15, hypothetical: 16.82, quantitative: 16.30},
-            {model: "Qwen2.5-VL-3B-Instruct", llm: "Qwen2.5", size: "3B", overall: 16.1, physics: 20.00, chemistry: 17.92, biology: 15.16, medicine: 18.69, conceptual: 13.94, hypothetical: 18.69, quantitative: 17.55},
-            // {model: "InternVL2-1B", llm: "InternLM2", size: "0.5B", overall: 14.4, physics: 17.57, chemistry: 14.03, biology: 12.96, medicine: 16.82, conceptual: 13.94, hypothetical: 16.82, quantitative: 15.67},
-            {model: "LongVA", llm: "Qwen2", size: "7B", overall: 14.3, physics: 16.15, chemistry: 14.94, biology: 13.69, medicine: 15.65, conceptual: 15.00, hypothetical: 15.65, quantitative: 14.11},
-            // {model: "InternVL2-2B", llm: "InternLM2", size: "2B", overall: 13.1, physics: 14.59, chemistry: 15.06, biology: 11.98, medicine: 12.15, conceptual: 12.12, hypothetical: 12.15, quantitative: 15.36},
-            {model: "LLaVA-OneVision-0.5B", llm: "Qwen2.5", size: "0.5B", overall: 12.1, physics: 15.41, chemistry: 12.99, biology: 11.74, medicine: 13.08, conceptual: 13.94, hypothetical: 13.08, quantitative: 11.29},
-            // Qwen3-VL models to be added later
+            {model: "Gemini-2.5-Pro", llm: "-", size: "-", overall: 64.3, physics: 61.44, chemistry: 61.82, biology: 64.79, medicine: 74.77, conceptual: 69.73, hypothetical: 67.79, quantitative: 50.61},
+            {model: "Gemini-2.5-Flash", llm: "-", size: "-", overall: 46.4, physics: 44.83, chemistry: 49.70, biology: 44.01, medicine: 55.14, conceptual: 50.81, hypothetical: 44.16, quantitative: 43.27},
+            {model: "Gemini-1.5-Pro", llm: "-", size: "-", overall: 27.5, physics: 28.53, chemistry: 26.06, biology: 27.38, medicine: 27.10, conceptual: 27.84, hypothetical: 28.31, quantitative: 25.71},
+            {model: "Gemini-2.0-Flash", llm: "-", size: "-", overall: 25.7, physics: 27.90, chemistry: 26.06, biology: 24.69, medicine: 22.43, conceptual: 28.38, hypothetical: 24.94, quantitative: 22.86},
+            {model: "GPT-4o", llm: "-", size: "-", overall: 24.9, physics: 24.45, chemistry: 29.70, biology: 21.52, medicine: 31.78, conceptual: 30.27, hypothetical: 28.05, quantitative: 11.84},
+
+            // Open-Source Models (0.5B–4B)
             {model: "Qwen3-VL-4B-Instruct", llm: "Qwen3", size: "4B", overall: 25.3, physics: 26.33, chemistry: 25.45, biology: 21.76, medicine: 34.58, conceptual: 34.86, hypothetical: 26.75, quantitative: 8.16},
             {model: "Qwen3-VL-4B-Thinking", llm: "Qwen3", size: "4B", overall: 24.6, physics: 26.02, chemistry: 27.88, biology: 21.52, medicine: 27.10, conceptual: 31.35, hypothetical: 23.64, quantitative: 15.92},
+            {model: "InternVL-3-2B-Instruct", llm: "Qwen2.5", size: "1.5B", overall: 24.0, physics: 25.08, chemistry: 21.82, biology: 24.21, medicine: 23.36, conceptual: 31.08, hypothetical: 23.90, quantitative: 13.47},
+            // {model: "InternVL2-4B", llm: "Phi-3-mini", size: "4B", overall: 21.3, physics: 20.38, chemistry: 24.85, biology: 18.09, medicine: 30.84, conceptual: 26.22, hypothetical: 24.16, quantitative: 9.39},
+            {model: "Qwen2.5-VL-3B-Instruct", llm: "Qwen2.5", size: "3B", overall: 16.1, physics: 17.55, chemistry: 13.94, biology: 15.16, medicine: 18.69, conceptual: 20.00, hypothetical: 17.92, quantitative: 7.35},
+            {model: "LLaVA-OneVision-0.5B", llm: "Qwen2.5", size: "0.5B", overall: 12.1, physics: 11.29, chemistry: 13.94, biology: 11.74, medicine: 13.08, conceptual: 15.41, hypothetical: 12.99, quantitative: 5.71},
+
+            // Open-Source Models (7B–14B)
+            {model: "InternVL-3-14B-Instruct", llm: "Qwen2.5", size: "14B", overall: 35.7, physics: 35.42, chemistry: 34.55, biology: 35.70, medicine: 38.32, conceptual: 53.24, hypothetical: 36.36, quantitative: 8.16},
+            // {model: "InternVL-3-9B-Instruct", llm: "InternLM3", size: "8B", overall: 29.2, physics: 27.69, chemistry: 29.70, biology: 29.10, medicine: 33.64, conceptual: 40.27, hypothetical: 30.91, quantitative: 9.80},
             {model: "Qwen3-VL-8B-Instruct", llm: "Qwen3", size: "8B", overall: 29.1, physics: 28.52, chemistry: 27.27, biology: 28.12, medicine: 37.38, conceptual: 39.19, hypothetical: 29.87, quantitative: 12.65},
-            {model: "Qwen3-VL-8B-Thinking", llm: "Qwen3", size: "8B", overall: 29.1, physics: 29.78, chemistry: 28.48, biology: 25.92, medicine: 40.19, conceptual: 35.68, hypothetical: 28.31, quantitative: 20.41}
+            {model: "Qwen3-VL-8B-Thinking", llm: "Qwen3", size: "8B", overall: 29.1, physics: 29.78, chemistry: 28.48, biology: 25.92, medicine: 40.19, conceptual: 35.68, hypothetical: 28.31, quantitative: 20.41},
+            {model: "InternVideo2.5-Chat-8B", llm: "Qwen2.5", size: "7B", overall: 25.3, physics: 30.41, chemistry: 23.64, biology: 20.29, medicine: 31.78, conceptual: 37.84, hypothetical: 23.12, quantitative: 9.80},
+            {model: "LLaVA-OneVision-7B", llm: "Qwen2.5", size: "7B", overall: 18.8, physics: 18.18, chemistry: 23.03, biology: 15.56, medicine: 26.17, conceptual: 23.51, hypothetical: 19.22, quantitative: 11.02},
+            {model: "Qwen2.5-VL-7B-Instruct", llm: "Qwen2.5", size: "7B", overall: 16.4, physics: 16.30, chemistry: 15.15, biology: 16.87, medicine: 16.82, conceptual: 18.92, hypothetical: 17.14, quantitative: 11.43},
+            {model: "LongVA", llm: "Qwen2", size: "7B", overall: 14.3, physics: 14.11, chemistry: 15.00, biology: 13.69, medicine: 15.65, conceptual: 16.15, hypothetical: 14.94, quantitative: 10.31},
+
+            // Open-Source Models (26B–40B)
+            {model: "InternVL-3-38B-Instruct", llm: "Qwen2.5", size: "32B", overall: 37.3, physics: 36.99, chemistry: 39.39, biology: 35.94, medicine: 40.19, conceptual: 52.43, hypothetical: 37.14, quantitative: 14.69},
+            {model: "InternVL2-40B", llm: "Hermes2", size: "34B", overall: 23.8, physics: 23.82, chemistry: 21.82, biology: 22.74, medicine: 30.84, conceptual: 28.38, hypothetical: 23.64, quantitative: 17.14},
+            {model: "Qwen2.5-VL-32B-Instruct", llm: "Qwen2.5", size: "32B", overall: 21.5, physics: 23.20, chemistry: 16.36, biology: 22.49, medicine: 20.56, conceptual: 24.86, hypothetical: 24.68, quantitative: 11.43},
+            {model: "LLaVA-NeXT-Video-32B", llm: "Qwen2", size: "32B", overall: 21.1, physics: 21.32, chemistry: 22.42, biology: 19.80, medicine: 23.36, conceptual: 26.22, hypothetical: 22.86, quantitative: 10.61},
+            {model: "InternVL2-26B", llm: "InternLM2", size: "20B", overall: 19.5, physics: 20.06, chemistry: 18.18, biology: 18.83, medicine: 22.43, conceptual: 21.89, hypothetical: 20.26, quantitative: 14.69},
+
+            // Open-Source Models (>70B)
+            {model: "InternVL-3-78B-Instruct", llm: "Qwen2.5", size: "72B", overall: 38.8, physics: 36.99, chemistry: 39.39, biology: 37.90, medicine: 46.73, conceptual: 57.30, hypothetical: 39.74, quantitative: 9.39},
+            {model: "InternVL2-Llama3-76B", llm: "Hermes2", size: "70B", overall: 26.3, physics: 25.08, chemistry: 29.70, biology: 24.94, medicine: 29.91, conceptual: 28.38, hypothetical: 27.01, quantitative: 22.04},
+            {model: "Qwen2.5-VL-72B-Instruct", llm: "Qwen2.5", size: "72B", overall: 20.3, physics: 19.44, chemistry: 16.97, biology: 21.27, medicine: 24.30, conceptual: 21.62, hypothetical: 20.78, quantitative: 17.55}
         ];
+
 
         let currentSort = 'overall';
         let sortDirection = 'desc';
